@@ -1,0 +1,25 @@
+name: Build Android APK
+on: [push] # Kodu her güncellediğinde otomatik APK yapar
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Build with Capacitor
+        run: |
+          npm install
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npx cap init "Akıllı Rota" "com.emre.akillirota" --web-dir .
+          npx cap add android
+          npx cap copy
+          cd android && ./gradlew assembleDebug
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: akilli-rota-app
+          path: android/app/build/outputs/apk/debug/app-debug.apk
