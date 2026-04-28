@@ -8,16 +8,16 @@ jobs:
       - name: Kodu Cek
         uses: actions/checkout@v4
         
-      - name: JDK 17 Kurulumu
+      - name: JDK 21 Kurulumu
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
           
       - name: Capacitor ile APK Derleme
         run: |
           # 1. Web dosyalarini izole bir 'www' klasorune tasiyoruz
-          mkdir www
+          mkdir -p www
           mv index.html www/
           
           # 2. Capacitor Kurulumu
