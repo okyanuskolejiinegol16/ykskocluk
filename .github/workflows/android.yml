@@ -16,11 +16,18 @@ jobs:
           
       - name: Capacitor ile APK Derleme
         run: |
+          # 1. Web dosyalarini izole bir 'www' klasorune tasiyoruz
+          mkdir www
+          mv index.html www/
+          
+          # 2. Capacitor Kurulumu
           npm init -y
           npm install @capacitor/core @capacitor/cli @capacitor/android
-          npx cap init "Akilli Rota" "com.emre.akillirota" --web-dir .
+          npx cap init "Akilli Rota" "com.emre.akillirota" --web-dir www
           npx cap add android
           npx cap copy
+          
+          # 3. APK Derleme
           cd android && ./gradlew assembleDebug
           
       - name: APK Dosyasini Yukle
