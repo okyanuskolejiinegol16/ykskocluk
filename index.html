@@ -2,246 +2,448 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Akıllı Rota YKS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Akıllı Rota</title>
     <style>
-        /* --- GENEL MOBİL UYGULAMA STİLLERİ --- */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: #f4f6f9; color: #333; display: flex; justify-content: center; }
+        /* --- ULTRA PREMIUM & GPU OPTİMİZE CSS --- */
+        :root {
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.4);
+            --secondary: #14b8a6;
+            --bg-grad: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; }
         
-        /* Telefon ekranı simülasyonu / kapsayıcı */
-        .app-container { width: 100%; max-width: 480px; height: 100vh; background: #f4f6f9; position: relative; overflow-y: auto; overflow-x: hidden; padding-bottom: 70px; display: flex; flex-direction: column; }
+        body { background: var(--bg-grad); color: var(--text-main); overflow: hidden; display: flex; justify-content: center; height: 100vh; transform: translateZ(0); }
 
-        /* --- KURULUM EKRANI (SADECE İLK AÇILIŞTA) --- */
-        #setupScreen { padding: 30px 20px; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center; background: white; z-index: 100; position: absolute; top: 0; left: 0; width: 100%; }
-        #setupScreen h2 { margin-bottom: 20px; color: #1e293b; }
-        .input-group { margin-bottom: 20px; text-align: left; }
-        .input-group label { font-weight: bold; font-size: 14px; color: #64748b; display: block; margin-bottom: 8px; }
-        .input-group select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; background: #f8fafc; }
-        .btn-primary { background: #2563eb; color: white; border: none; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; }
-        .btn-primary:active { background: #1d4ed8; }
+        .app-container { width: 100%; max-width: 500px; height: 100%; position: relative; display: flex; flex-direction: column; }
 
-        /* --- ANA EKRAN (AKILLI ROTA) --- */
-        #mainScreen { display: none; padding: 20px; }
+        .glass-card { background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 20px; box-shadow: var(--card-shadow); }
+
+        .page { display: none; flex: 1; padding: 30px 20px; overflow-y: auto; overflow-x: hidden; padding-bottom: 50px; animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .page.active { display: block; }
         
-        /* Üst Başlık */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .header h1 { font-size: 24px; font-weight: 900; letter-spacing: -0.5px; }
-        .profile-icon { width: 40px; height: 40px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #475569; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 
-        /* Uyarı / Analiz Kartı */
-        .alert-card { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 12px; display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; font-size: 13px; color: #1e3a8a; }
-        .alert-card b { color: #1e40af; }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.97) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
-        /* Bölüm Başlığı */
-        .section-title { font-size: 18px; font-weight: 800; margin-bottom: 15px; color: #0f172a; }
+        /* --- BAŞLIKLAR & METİNLER --- */
+        .gradient-text { background: linear-gradient(to right, var(--primary), #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; letter-spacing: -0.5px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .header h1 { font-size: 28px; }
+        .profile-btn { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; transition: transform 0.2s; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .profile-btn:active { transform: scale(0.85); }
 
-        /* Rota Kartları */
-        .task-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
-        .task-card { background: white; border-radius: 16px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; position: relative; }
-        .task-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .task-number { background: #3b82f6; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; flex-shrink: 0; }
-        .task-title { font-size: 14px; font-weight: 700; color: #334155; }
+        /* --- BUTONLAR --- */
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 16px; font-size: 16px; font-weight: 800; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); display: flex; justify-content: center; align-items: center; gap: 8px; position: relative; overflow: hidden; }
+        .btn:active { transform: scale(0.96); }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 8px 20px var(--primary-glow); }
+        .btn-success { background: var(--secondary); color: white; margin-top: 15px; box-shadow: 0 8px 20px rgba(20, 184, 166, 0.3); }
         
-        .task-tags { display: flex; gap: 8px; margin-left: 34px; flex-wrap: wrap; }
-        .tag { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 20px; padding: 4px 10px; font-size: 11px; color: #475569; display: flex; align-items: center; gap: 4px; font-weight: 600; }
-        .tag.red-icon::before { content: "🎯"; font-size: 10px; }
-        .tag.blue-icon::before { content: "🔹"; font-size: 10px; }
+        /* --- GİRİŞ & FORMLAR --- */
+        .input-group { margin-bottom: 20px; position: relative; }
+        .input-label { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
+        .custom-input, .custom-select { width: 100%; padding: 16px; border-radius: 16px; border: 2px solid #e2e8f0; background: white; font-size: 16px; font-weight: 700; color: var(--text-main); outline: none; transition: 0.3s; -webkit-appearance: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); user-select: auto; }
+        .custom-input:focus, .custom-select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow); }
 
-        /* Ekstra Görev Butonu */
-        .btn-ekstra { background: #10b981; color: white; border: none; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: bold; width: 100%; margin-bottom: 25px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        /* --- SETUP WIZARD (KURULUM) --- */
+        .setup-step { display: none; animation: scaleIn 0.3s ease; }
+        .setup-step.active { display: block; }
+        .step-indicator { display: flex; gap: 8px; margin-bottom: 24px; justify-content: center; }
+        .dot { width: 30px; height: 6px; border-radius: 3px; background: #cbd5e1; transition: 0.3s; }
+        .dot.active { background: var(--primary); width: 50px; }
+
+        /* --- KAYNAK SEÇİMİ --- */
+        .book-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; margin-bottom: 12px; border-radius: 16px; border: 2px solid transparent; transition: 0.2s; cursor: pointer; }
+        .book-item.selected { border-color: var(--primary); background: rgba(99, 102, 241, 0.05); }
+        .book-info h4 { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+        .book-info p { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+        .toggle-switch { width: 44px; height: 24px; background: #cbd5e1; border-radius: 12px; position: relative; transition: 0.3s; pointer-events: none; }
+        .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .book-item.selected .toggle-switch { background: var(--primary); }
+        .book-item.selected .toggle-switch::after { transform: translateX(20px); }
+
+        /* SİSTEM BİLDİRİMİ */
+        .smart-badge { display: none; background: rgba(20, 184, 166, 0.1); color: var(--secondary); padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 800; margin-bottom: 10px; border: 1px solid rgba(20, 184, 166, 0.3); animation: scaleIn 0.2s; }
+
+        /* --- ANA EKRAN BİLGİ KARTLARI --- */
+        .info-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        .mini-card { padding: 16px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
+        .mini-card h3 { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
+        .mini-card p { font-size: 18px; font-weight: 900; }
         
-        /* Kaynak Durumu (İlerleme Barları) */
-        .progress-card { background: white; border-radius: 16px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid #f1f5f9; }
-        .progress-title { font-size: 12px; font-weight: 800; color: #64748b; margin-bottom: 15px; }
-        .progress-item { margin-bottom: 12px; }
-        .progress-label { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; margin-bottom: 5px; color: #334155; }
-        .progress-bar-bg { background: #e2e8f0; height: 8px; border-radius: 4px; width: 100%; overflow: hidden; }
-        .progress-bar-fill { background: #3b82f6; height: 100%; border-radius: 4px; }
+        /* --- GÖREV KARTLARI --- */
+        .task-list { display: flex; flex-direction: column; gap: 16px; }
+        .task-card { padding: 20px; position: relative; transition: transform 0.2s; border-left: 6px solid var(--primary); }
+        .task-card.extra { border-left-color: var(--secondary); }
+        .task-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .task-title { font-size: 16px; font-weight: 800; line-height: 1.3; }
+        .task-badge { padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; text-transform: uppercase; background: rgba(99, 102, 241, 0.1); color: var(--primary); }
+        .extra .task-badge { background: rgba(20, 184, 166, 0.1); color: var(--secondary); }
+        .task-goal { font-size: 14px; font-weight: 700; color: #b45309; background: #fef3c7; padding: 8px 12px; border-radius: 10px; display: inline-block; margin-bottom: 12px; }
+        .task-source { font-size: 13px; font-weight: 700; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
 
-        /* Alt Navigasyon (Bottom Nav) */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: white; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-around; padding: 10px 0; padding-bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 50; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #94a3b8; font-size: 10px; font-weight: 600; cursor: pointer; }
-        .nav-item.active { color: #3b82f6; }
-        .nav-icon { font-size: 20px; margin-bottom: 4px; }
+        /* TOAST */
+        #toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 16px 24px; border-radius: 100px; font-weight: 700; font-size: 14px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        #toast.show { bottom: 40px; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
 
-    <div id="setupScreen">
-        <h2>Hoş Geldin! 👋</h2>
-        <p style="color: #64748b; margin-bottom: 25px; font-size: 14px;">Sana en uygun planı hazırlayabilmemiz için seviyeni belirle.</p>
-        
-        <div class="input-group">
-            <label>Şu anki Seviyen Ne?</label>
-            <select id="secimSeviye">
-                <option value="temel">Temel (Konu Eksiğim Çok)</option>
-                <option value="orta">Orta (Netler Ortalama)</option>
-                <option value="ileri">İleri (Pratik ve Deneme Lazım)</option>
-            </select>
+    <div id="page-setup" class="page">
+        <div class="step-indicator">
+            <div class="dot active" id="dot-1"></div>
+            <div class="dot" id="dot-2"></div>
+            <div class="dot" id="dot-3"></div>
         </div>
-        
-        <button class="btn-primary" onclick="profilOlustur()">Profilimi Kaydet ve Başla</button>
+
+        <div id="step-1" class="setup-step active">
+            <h2 class="gradient-text" style="font-size: 32px; margin-bottom: 8px;">Kayıt İşlemi</h2>
+            <p style="color: var(--text-muted); font-weight: 600; margin-bottom: 30px;">Sistemin size en uygun planı hazırlayabilmesi için bilgilerinizi giriniz.</p>
+            
+            <div class="input-group">
+                <label class="input-label">Adınız</label>
+                <input type="text" id="userName" class="custom-input" placeholder="Lütfen adınızı girin" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Hedef Alanınız</label>
+                <select id="userField" class="custom-select">
+                    <option value="sayisal">Sayısal</option>
+                    <option value="ea">Eşit Ağırlık</option>
+                    <option value="sozel">Sözel</option>
+                    <option value="dil">Yabancı Dil</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label class="input-label">Güncel Seviyeniz</label>
+                <select id="userLevel" class="custom-select">
+                    <option value="temel">Temel Seviye</option>
+                    <option value="orta" selected>Orta Seviye</option>
+                    <option value="ileri">İleri Seviye</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="nextStep(2)">Devam Et ➔</button>
+        </div>
+
+        <div id="step-2" class="setup-step">
+            <h2 class="gradient-text" style="font-size: 32px; margin-bottom: 8px;">Kütüphane</h2>
+            <p style="color: var(--text-muted); font-weight: 600; margin-bottom: 20px;">Sistemde kayıtlı kaynaklardan elinizde olanları işaretleyiniz.</p>
+            
+            <div id="systemBooksList" style="margin-bottom: 20px;">
+                </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button class="btn" style="background: #e2e8f0; color: #475569;" onclick="nextStep(1)">Geri</button>
+                <button class="btn btn-primary" onclick="nextStep(3)">Devam Et ➔</button>
+            </div>
+        </div>
+
+        <div id="step-3" class="setup-step">
+            <h2 class="gradient-text" style="font-size: 32px; margin-bottom: 8px;">Özel Kaynaklar</h2>
+            <p style="color: var(--text-muted); font-weight: 600; margin-bottom: 20px;">Sistemde bulunmayan kişisel kaynaklarınızı buraya ekleyebilirsiniz.</p>
+            
+            <div class="glass-card" style="padding: 20px; margin-bottom: 20px;">
+                <div class="input-group">
+                    
+                    <select id="customBookDers" class="custom-select" style="padding: 12px; margin-bottom: 10px;" onchange="checkDersTipi()">
+                        <option value="" disabled selected>Ders Seçiniz</option>
+                        <option value="Türkçe">Türkçe</option>
+                        <option value="Matematik">Matematik</option>
+                        <option value="Geometri">Geometri</option>
+                        <option value="Fizik">Fizik</option>
+                        <option value="Kimya">Kimya</option>
+                        <option value="Biyoloji">Biyoloji</option>
+                        <option value="Edebiyat">Edebiyat</option>
+                        <option value="Tarih">Tarih</option>
+                        <option value="Coğrafya">Coğrafya</option>
+                        <option value="Felsefe">Felsefe</option>
+                        <option value="Din Kültürü">Din Kültürü</option>
+                    </select>
+
+                    <div id="smartBadge" class="smart-badge">📌 <b>Sistem Bilgisi:</b> Türkçe sadece TYT kapsamındadır, otomatik ayarlandı.</div>
+
+                    <div id="sinavTipiContainer" style="display:none; margin-bottom: 10px;">
+                        <select id="customBookSinav" class="custom-select" style="padding: 12px;">
+                            <option value="TYT">TYT</option>
+                            <option value="AYT">AYT</option>
+                        </select>
+                    </div>
+
+                    <input type="text" id="customBookAd" class="custom-input" placeholder="Kitap Adı veya Yayın (Örn: 3D Yayınları)" style="padding: 12px; margin-bottom: 10px;">
+                    
+                    <select id="customBookZorluk" class="custom-select" style="padding: 12px; margin-bottom: 10px;">
+                        <option value="Kolay">Kolay Seviye</option>
+                        <option value="Orta" selected>Orta Seviye</option>
+                        <option value="Zor">Zor Seviye</option>
+                    </select>
+                    
+                    <button class="btn btn-success" style="padding: 12px; margin-top: 0;" onclick="addCustomBook()">Listeye Ekle</button>
+                </div>
+            </div>
+
+            <div id="myCustomBooksRender" style="margin-bottom: 20px; font-weight: 700; font-size: 14px; color: var(--primary);">Eklenen Özel Kaynak Sayısı: 0</div>
+
+            <div style="display: flex; gap: 10px;">
+                <button class="btn" style="background: #e2e8f0; color: #475569;" onclick="nextStep(2)">Geri</button>
+                <button class="btn btn-primary" onclick="finishSetup()">Sistemi Başlat</button>
+            </div>
+        </div>
     </div>
 
-    <div id="mainScreen">
-        
+    <div id="page-home" class="page">
         <div class="header">
-            <h1>AKILLI ROTA</h1>
-            <div class="profile-icon" onclick="profilSifirla()" title="Profili Sıfırla">👤</div>
-        </div>
-
-        <div class="alert-card">
-            <span style="font-size: 16px;">📢</span>
             <div>
-                <b>SON DENEME ANALİZİ:</b> Geometri ve Paragraf konularında eksik tespit edildi. Planın güncellendi!
+                <h1 class="gradient-text" id="welcomeText">Merhaba</h1>
+                <p style="font-size: 13px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-top: 2px;" id="userSubText">Yükleniyor...</p>
+            </div>
+            <div class="profile-btn" onclick="resetProfile()" title="Ayarları Sıfırla">⚙️</div>
+        </div>
+
+        <div class="info-panel">
+            <div class="glass-card mini-card">
+                <h3>YKS'YE KALAN</h3>
+                <p id="countdown-text" style="color: var(--danger);">-- Gün</p>
+            </div>
+            <div class="glass-card mini-card">
+                <h3>KAYITLI KAYNAK</h3>
+                <p id="totalBooksText" style="color: var(--primary);">-- Kitap</p>
             </div>
         </div>
 
-        <div class="section-title">BUGÜNKÜ ROTAN</div>
+        <h2 style="font-size: 20px; font-weight: 900; margin: 30px 0 16px 0;">Bugünkü Planınız</h2>
         
-        <div id="rotaListesi" class="task-list">
-            </div>
+        <div id="taskList" class="task-list"></div>
 
-        <button id="btnDahaCok" class="btn-ekstra" onclick="ekstraGorevVer()">
-            <span>+</span> Daha Fazla Çözerim
+        <button class="btn btn-success" onclick="giveMeMore()">
+            <span style="font-size: 22px;">+</span> Ekstra Görev Ekle
         </button>
-
-        <div class="progress-card">
-            <div class="progress-title">KAYNAK DURUMU</div>
-            
-            <div class="progress-item">
-                <div class="progress-label"><span>Çap Matematik SB</span> <span>%45</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 45%;"></div></div>
-            </div>
-            
-            <div class="progress-item">
-                <div class="progress-label"><span>Limit Türkçe SB</span> <span>%70</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 70%;"></div></div>
-            </div>
-        </div>
-
     </div>
 
-    <div class="bottom-nav">
-        <div class="nav-item"><div class="nav-icon">🏠</div>Ana Sayfa</div>
-        <div class="nav-item active"><div class="nav-icon">📅</div>Planım</div>
-        <div class="nav-item"><div class="nav-icon">📝</div>Denemeler</div>
-        <div class="nav-item" onclick="profilSifirla()"><div class="nav-icon">👤</div>Profil</div>
-    </div>
-
+    <div id="toast">Bildirim</div>
 </div>
 
 <script>
-    // --- VERİTABANI (Daha detaylı, görsele uygun) ---
-    const kaynaklar = [
-        { ders: "MATEMATİK", konu: "Trigonometri Test 3", kaynakAdi: "Çap Yayınları SB", zorluk: "Orta", seviye: ["orta", "ileri"] },
-        { ders: "TÜRKÇE", konu: "Paragraf Çözümü", kaynakAdi: "Limit Kronometre", zorluk: "Kolay", seviye: ["temel", "orta"] },
-        { ders: "FİZİK", konu: "Elektrik ve Manyetizma Tekrar", kaynakAdi: "MEB Kitabı", zorluk: "Zor", seviye: ["temel", "orta", "ileri"] },
-        { ders: "GEOMETRİ", konu: "Üçgenler Karma Test", kaynakAdi: "Orijinal Yayınları", zorluk: "Zor", seviye: ["ileri"] },
-        { ders: "KİMYA", konu: "Organik Kimya Giriş", kaynakAdi: "Aydın Yayınları", zorluk: "Orta", seviye: ["orta", "ileri"] }
+    // --- SİSTEM VERİTABANI ---
+    const systemDatabase = [
+        { id: 1, ders: "TYT Matematik", ad: "3D Yayınları", zorluk: "Zor", hedef: "Süre tutarak 3 test bitirin." },
+        { id: 2, ders: "TYT Türkçe", ad: "Limit Paragraf", zorluk: "Orta", hedef: "Odaklanarak 40 soru çözün." },
+        { id: 3, ders: "AYT Fizik", ad: "Apotemi Fasikülleri", zorluk: "Çok Zor", hedef: "Konu özeti okuyun ve 2 test çözün." },
+        { id: 4, ders: "TYT Geometri", ad: "Kenan Kara Notları", zorluk: "Orta", hedef: "Konu testlerini eksiksiz tamamlayın." },
+        { id: 5, ders: "Genel Deneme", ad: "TYT Çıkmış Yıllar", zorluk: "Karma", hedef: "135 dakika süreyle tam deneme çözün." }
     ];
 
-    let mevcutPlan = [];
+    let appData = { profile: {}, ownedSystemBookIds: [], customBooks: [], myLibrary: [], todaysPlan: [] };
 
-    // --- BAŞLANGIÇ KONTROLÜ (Cihaz Hafızası) ---
-    window.onload = function() {
-        // Cihazda profil var mı kontrol et (LocalStorage)
-        const kayitliSeviye = localStorage.getItem('yks_seviye');
-        
-        if (kayitliSeviye) {
-            // Profil varsa direkt ana ekrana geç ve plan üret
-            document.getElementById('setupScreen').style.display = 'none';
-            document.getElementById('mainScreen').style.display = 'block';
-            planHazirla(kayitliSeviye);
+    window.addEventListener('DOMContentLoaded', () => {
+        calculateCountdown();
+        checkProfile();
+    });
+
+    function checkProfile() {
+        const savedData = localStorage.getItem('akilli_rota_data');
+        if (!savedData) {
+            renderSystemBooks();
+            showPage('setup');
         } else {
-            // Profil yoksa kurulum ekranını göster
-            document.getElementById('setupScreen').style.display = 'flex';
-            document.getElementById('mainScreen').style.display = 'none';
-        }
-    };
-
-    // --- PROFİL KAYDETME ---
-    function profilOlustur() {
-        const secilen = document.getElementById('secimSeviye').value;
-        localStorage.setItem('yks_seviye', secilen); // Cihaza kaydet
-        
-        // Ekranları değiştir
-        document.getElementById('setupScreen').style.display = 'none';
-        document.getElementById('mainScreen').style.display = 'block';
-        
-        planHazirla(secilen);
-    }
-
-    // --- TEST İÇİN PROFİL SIFIRLAMA ---
-    function profilSifirla() {
-        if(confirm("Profili sıfırlamak ve yeniden seviye seçmek ister misin?")) {
-            localStorage.removeItem('yks_seviye');
-            location.reload(); // Sayfayı yenile
+            appData = JSON.parse(savedData);
+            updateDashboard();
+            generateDailyPlan();
+            showPage('home');
         }
     }
 
-    // --- PLAN ÜRETİCİ ---
-    function planHazirla(seviye) {
-        mevcutPlan = [];
-        document.getElementById('rotaListesi').innerHTML = ''; // Temizle
-        
-        // Seviyeye uygun kaynakları filtrele
-        let uygunKaynaklar = kaynaklar.filter(k => k.seviye.includes(seviye));
-        
-        // Rastgele karıştırıp minimum 2 tane (veya 3 tane) görev ekle
-        uygunKaynaklar = uygunKaynaklar.sort(() => 0.5 - Math.random());
-        
-        const gorevSayisi = Math.min(3, uygunKaynaklar.length); // İlk açılışta 3 görev ver
-
-        for(let i = 0; i < gorevSayisi; i++) {
-            mevcutPlan.push(uygunKaynaklar[i]);
-            kartaYazdir(uygunKaynaklar[i], i + 1);
-        }
+    function nextStep(stepNum) {
+        document.querySelectorAll('.setup-step').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.dot').forEach(el => el.classList.remove('active'));
+        document.getElementById(`step-${stepNum}`).classList.add('active');
+        document.getElementById(`dot-${stepNum}`).classList.add('active');
     }
 
-    // --- DAHA FAZLA ÇÖZ (AZALTMA YOK) ---
-    function ekstraGorevVer() {
-        const seviye = localStorage.getItem('yks_seviye');
-        const uygunKaynaklar = kaynaklar.filter(k => k.seviye.includes(seviye));
+    function renderSystemBooks() {
+        const list = document.getElementById('systemBooksList');
+        list.innerHTML = '';
+        systemDatabase.forEach(book => {
+            const isChecked = appData.ownedSystemBookIds?.includes(book.id);
+            const html = `
+                <div class="glass-card book-item ${isChecked ? 'selected' : ''}" onclick="toggleBook(this, ${book.id})">
+                    <div class="book-info">
+                        <h4>${book.ad}</h4>
+                        <p>${book.ders} • ${book.zorluk}</p>
+                    </div>
+                    <div class="toggle-switch"></div>
+                </div>
+            `;
+            list.insertAdjacentHTML('beforeend', html);
+        });
+    }
+
+    function toggleBook(element, id) {
+        element.classList.toggle('selected');
+        if(!appData.ownedSystemBookIds) appData.ownedSystemBookIds = [];
         
-        // Zaten planda olmayan bir kaynak bul
-        const kalanKaynaklar = uygunKaynaklar.filter(k => !mevcutPlan.includes(k));
-        
-        if (kalanKaynaklar.length > 0) {
-            const ekstraGorev = kalanKaynaklar[0]; // İlkini al
-            mevcutPlan.push(ekstraGorev);
-            kartaYazdir(ekstraGorev, mevcutPlan.length);
-            
-            // Tıklama efekti için küçük bir animasyon (Scroll)
-            setTimeout(() => {
-                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-            }, 100);
+        if(appData.ownedSystemBookIds.includes(id)) {
+            appData.ownedSystemBookIds = appData.ownedSystemBookIds.filter(bId => bId !== id);
         } else {
-            alert("Harikasın Emre! Bugünkü tüm potansiyel görevleri aldın. Şimdi çözme vakti!");
+            appData.ownedSystemBookIds.push(id);
         }
     }
 
-    // --- HTML KART OLUŞTURUCU (GÖRSELE BİREBİR UYGUN) ---
-    function kartaYazdir(gorev, index) {
-        const liste = document.getElementById('rotaListesi');
-        const kart = document.createElement('div');
-        kart.className = 'task-card';
+    // --- DERS KONTROL ALGORİTMASI ---
+    let zekiSinavTipi = ""; 
+    
+    function checkDersTipi() {
+        const ders = document.getElementById('customBookDers').value;
+        const sinavContainer = document.getElementById('sinavTipiContainer');
+        const smartBadge = document.getElementById('smartBadge');
         
-        kart.innerHTML = `
-            <div class="task-header">
-                <div class="task-number">${index}</div>
-                <div class="task-title">${gorev.ders}: ${gorev.konu}</div>
-            </div>
-            <div class="task-tags">
-                <div class="tag red-icon">Kaynak: ${gorev.kaynakAdi}</div>
-                <div class="tag blue-icon">Zorluk: ${gorev.zorluk}</div>
+        const sadeceTYT = ['Türkçe', 'Felsefe', 'Din Kültürü'];
+        const sadeceAYT = ['Edebiyat'];
+        
+        if(sadeceTYT.includes(ders)) {
+            sinavContainer.style.display = 'none';
+            smartBadge.style.display = 'block';
+            smartBadge.innerHTML = `📌 <b>Sistem Bilgisi:</b> ${ders} sadece TYT kapsamındadır, otomatik ayarlandı.`;
+            zekiSinavTipi = "TYT";
+        } 
+        else if(sadeceAYT.includes(ders)) {
+            sinavContainer.style.display = 'none';
+            smartBadge.style.display = 'block';
+            smartBadge.innerHTML = `📌 <b>Sistem Bilgisi:</b> ${ders} sadece AYT kapsamındadır, otomatik ayarlandı.`;
+            zekiSinavTipi = "AYT";
+        } 
+        else {
+            sinavContainer.style.display = 'block';
+            smartBadge.style.display = 'none';
+            zekiSinavTipi = ""; 
+        }
+    }
+
+    function addCustomBook() {
+        const dersSecimi = document.getElementById('customBookDers').value;
+        const ad = document.getElementById('customBookAd').value.trim();
+        const zorluk = document.getElementById('customBookZorluk').value;
+
+        if(!dersSecimi || !ad) {
+            showToast("Lütfen ders seçimi yapın ve kitap adını girin.");
+            return;
+        }
+
+        let finalDersAdi = "";
+        if (zekiSinavTipi !== "") {
+            finalDersAdi = zekiSinavTipi + " " + dersSecimi;
+        } else {
+            const kullaniciSecimi = document.getElementById('customBookSinav').value;
+            finalDersAdi = kullaniciSecimi + " " + dersSecimi;
+        }
+
+        if(!appData.customBooks) appData.customBooks = [];
+        
+        appData.customBooks.push({
+            id: 'custom_' + Date.now(),
+            ders: finalDersAdi,
+            ad: ad,
+            zorluk: zorluk,
+            hedef: "Konu akışına uygun olarak en az 2 test çözün.",
+            isCustom: true
+        });
+
+        document.getElementById('customBookDers').value = '';
+        document.getElementById('customBookAd').value = '';
+        document.getElementById('sinavTipiContainer').style.display = 'none';
+        document.getElementById('smartBadge').style.display = 'none';
+        zekiSinavTipi = "";
+
+        document.getElementById('myCustomBooksRender').innerText = `Eklenen Özel Kaynak Sayısı: ${appData.customBooks.length}`;
+        showToast("Özel kaynak başarıyla eklendi.");
+    }
+
+    function finishSetup() {
+        const name = document.getElementById('userName').value.trim();
+        if(!name) { showToast("Lütfen ilk adımdaki isim alanını doldurun."); nextStep(1); return; }
+
+        appData.profile = { name: name, field: document.getElementById('userField').value, level: document.getElementById('userLevel').value };
+
+        const selectedSystemBooks = systemDatabase.filter(b => appData.ownedSystemBookIds.includes(b.id));
+        appData.myLibrary = [...selectedSystemBooks, ...(appData.customBooks || [])];
+
+        if(appData.myLibrary.length === 0) { showToast("Kütüphaneniz boş. Lütfen kaynak seçimi yapın."); return; }
+
+        localStorage.setItem('akilli_rota_data', JSON.stringify(appData));
+        updateDashboard(); generateDailyPlan(); showPage('home');
+    }
+
+    function resetProfile() {
+        showToast("Veriler temizleniyor...");
+        setTimeout(() => { localStorage.removeItem('akilli_rota_data'); location.reload(); }, 1000);
+    }
+
+    function updateDashboard() {
+        document.getElementById('welcomeText').innerText = `Merhaba, ${appData.profile.name}`;
+        document.getElementById('userSubText').innerText = `${appData.profile.field} • ${appData.profile.level} Seviye`;
+        document.getElementById('totalBooksText').innerText = `${appData.myLibrary.length}`;
+    }
+
+    function calculateCountdown() {
+        const examDate = new Date('2026-06-20T00:00:00');
+        const diffDays = Math.ceil((examDate - new Date()) / (1000 * 60 * 60 * 24));
+        document.getElementById('countdown-text').innerText = diffDays > 0 ? `${diffDays}` : "Bugün!";
+    }
+
+    function generateDailyPlan() {
+        document.getElementById('taskList').innerHTML = "";
+        appData.todaysPlan = [];
+        let pool = [...appData.myLibrary].sort(() => 0.5 - Math.random());
+        let selection = pool.slice(0, 2);
+        selection.forEach((task, index) => { appData.todaysPlan.push(task); renderTask(task, index + 1, false); });
+    }
+
+    function giveMeMore() {
+        let unusedBooks = appData.myLibrary.filter(book => !appData.todaysPlan.some(p => p.id === book.id));
+        if(unusedBooks.length > 0) {
+            let extraTask = unusedBooks[Math.floor(Math.random() * unusedBooks.length)];
+            appData.todaysPlan.push(extraTask);
+            renderTask(extraTask, appData.todaysPlan.length, true);
+            setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 50);
+        } else {
+            showToast(`Tebrikler ${appData.profile.name}. Kütüphanenizdeki tüm kaynakları bugünkü plana eklediniz.`);
+        }
+    }
+
+    function renderTask(task, index, isExtra) {
+        const list = document.getElementById('taskList');
+        const extraClass = isExtra ? 'extra' : '';
+        const badgeText = isExtra ? 'EKSTRA GÖREV' : 'ZORUNLU GÖREV';
+
+        const html = `
+            <div class="glass-card task-card ${extraClass}">
+                <div class="task-header">
+                    <h3 class="task-title">${task.ders}</h3>
+                    <span class="task-badge">${badgeText}</span>
+                </div>
+                <div class="task-goal">Hedef: ${task.hedef}</div>
+                <div class="task-source"><span>📚 ${task.ad}</span> • <span>⚡ ${task.zorluk}</span></div>
             </div>
         `;
-        
-        liste.appendChild(kart);
+        list.insertAdjacentHTML('beforeend', html);
+    }
+
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(`page-${pageId}`).classList.add('active');
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast'); toast.innerText = msg;
+        toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2500);
     }
 </script>
 
