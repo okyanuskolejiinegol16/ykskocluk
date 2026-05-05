@@ -5,447 +5,552 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Akıllı Rota</title>
     <style>
-        /* --- ULTRA PREMIUM & GPU OPTİMİZE CSS --- */
+        /* --- PREMIUM CSS & YKS OPTİMİZASYONU --- */
         :root {
-            --primary: #6366f1;
-            --primary-glow: rgba(99, 102, 241, 0.4);
-            --secondary: #14b8a6;
-            --bg-grad: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            --glass-bg: rgba(255, 255, 255, 0.85);
-            --glass-border: rgba(255, 255, 255, 0.5);
+            --primary: #4f46e5;
+            --secondary: #0ea5e9;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-main: #f1f5f9;
+            --card-bg: #ffffff;
             --text-main: #0f172a;
-            --text-muted: #475569;
-            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --ayt-color: #db2777;
+            --ayt-bg: #fce7f3;
+            --ai-color: #8b5cf6;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         
-        body { background: var(--bg-grad); color: var(--text-main); overflow: hidden; display: flex; justify-content: center; height: 100vh; transform: translateZ(0); }
+        body { background: var(--bg-main); color: var(--text-main); height: 100vh; display: flex; justify-content: center; overflow: hidden; }
 
-        .app-container { width: 100%; max-width: 500px; height: 100%; position: relative; display: flex; flex-direction: column; }
+        .app-container { width: 100%; max-width: 500px; height: 100%; display: flex; flex-direction: column; position: relative; background: var(--bg-main); }
 
-        .glass-card { background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 20px; box-shadow: var(--card-shadow); }
-
-        .page { display: none; flex: 1; padding: 30px 20px; overflow-y: auto; overflow-x: hidden; padding-bottom: 50px; animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .page { display: none; flex: 1; padding: 25px 20px 100px 20px; overflow-y: auto; animation: fadeIn 0.2s ease; }
         .page.active { display: block; }
-        
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        @keyframes scaleIn { from { opacity: 0; transform: scale(0.97) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); padding: 16px; margin-bottom: 16px; }
 
-        /* --- BAŞLIKLAR & METİNLER --- */
-        .gradient-text { background: linear-gradient(to right, var(--primary), #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; letter-spacing: -0.5px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .header h1 { font-size: 28px; }
-        .profile-btn { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; transition: transform 0.2s; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .profile-btn:active { transform: scale(0.85); }
+        .bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: 70px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); cursor: pointer; width: 33.3%; font-size: 12px; font-weight: 600; gap: 4px; transition: 0.2s; }
+        .nav-item.active { color: var(--primary); }
 
-        /* --- BUTONLAR --- */
-        .btn { width: 100%; padding: 16px; border: none; border-radius: 16px; font-size: 16px; font-weight: 800; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); display: flex; justify-content: center; align-items: center; gap: 8px; position: relative; overflow: hidden; }
-        .btn:active { transform: scale(0.96); }
-        .btn-primary { background: var(--primary); color: white; box-shadow: 0 8px 20px var(--primary-glow); }
-        .btn-success { background: var(--secondary); color: white; margin-top: 15px; box-shadow: 0 8px 20px rgba(20, 184, 166, 0.3); }
-        
-        /* --- GİRİŞ & FORMLAR --- */
-        .input-group { margin-bottom: 20px; position: relative; }
-        .input-label { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
-        .custom-input, .custom-select { width: 100%; padding: 16px; border-radius: 16px; border: 2px solid #e2e8f0; background: white; font-size: 16px; font-weight: 700; color: var(--text-main); outline: none; transition: 0.3s; -webkit-appearance: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); user-select: auto; }
-        .custom-input:focus, .custom-select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow); }
-
-        /* --- SETUP WIZARD (KURULUM) --- */
-        .setup-step { display: none; animation: scaleIn 0.3s ease; }
-        .setup-step.active { display: block; }
-        .step-indicator { display: flex; gap: 8px; margin-bottom: 24px; justify-content: center; }
-        .dot { width: 30px; height: 6px; border-radius: 3px; background: #cbd5e1; transition: 0.3s; }
-        .dot.active { background: var(--primary); width: 50px; }
-
-        /* --- KAYNAK SEÇİMİ --- */
-        .book-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; margin-bottom: 12px; border-radius: 16px; border: 2px solid transparent; transition: 0.2s; cursor: pointer; }
-        .book-item.selected { border-color: var(--primary); background: rgba(99, 102, 241, 0.05); }
-        .book-info h4 { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
-        .book-info p { font-size: 12px; color: var(--text-muted); font-weight: 600; }
-        .toggle-switch { width: 44px; height: 24px; background: #cbd5e1; border-radius: 12px; position: relative; transition: 0.3s; pointer-events: none; }
-        .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .book-item.selected .toggle-switch { background: var(--primary); }
-        .book-item.selected .toggle-switch::after { transform: translateX(20px); }
-
-        /* SİSTEM BİLDİRİMİ */
-        .smart-badge { display: none; background: rgba(20, 184, 166, 0.1); color: var(--secondary); padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 800; margin-bottom: 10px; border: 1px solid rgba(20, 184, 166, 0.3); animation: scaleIn 0.2s; }
-
-        /* --- ANA EKRAN BİLGİ KARTLARI --- */
-        .info-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-        .mini-card { padding: 16px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
-        .mini-card h3 { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; }
-        .mini-card p { font-size: 18px; font-weight: 900; }
-        
         /* --- GÖREV KARTLARI --- */
-        .task-list { display: flex; flex-direction: column; gap: 16px; }
-        .task-card { padding: 20px; position: relative; transition: transform 0.2s; border-left: 6px solid var(--primary); }
-        .task-card.extra { border-left-color: var(--secondary); }
-        .task-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-        .task-title { font-size: 16px; font-weight: 800; line-height: 1.3; }
-        .task-badge { padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; text-transform: uppercase; background: rgba(99, 102, 241, 0.1); color: var(--primary); }
-        .extra .task-badge { background: rgba(20, 184, 166, 0.1); color: var(--secondary); }
-        .task-goal { font-size: 14px; font-weight: 700; color: #b45309; background: #fef3c7; padding: 8px 12px; border-radius: 10px; display: inline-block; margin-bottom: 12px; }
-        .task-source { font-size: 13px; font-weight: 700; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+        .task-card { display: flex; align-items: center; justify-content: space-between; border-left: 4px solid var(--primary); transition: 0.3s; }
+        .task-info { flex: 1; }
+        .task-badge { font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #e0e7ff; color: var(--primary); display: inline-block; margin-bottom: 6px; letter-spacing: 0.5px;}
+        .task-badge.ai-badge { background: #ede9fe; color: var(--ai-color); }
+        .task-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+        .task-target { font-size: 13px; font-weight: 600; color: #d97706; background: #fef3c7; padding: 4px 8px; border-radius: 6px; display: inline-block; }
 
-        /* TOAST */
-        #toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 16px 24px; border-radius: 100px; font-weight: 700; font-size: 14px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        #toast.show { bottom: 40px; }
+        .check-box { width: 28px; height: 28px; border: 2px solid var(--border-color); border-radius: 8px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; background: #fff; margin-left: 15px; }
+        .check-box.checked { background: var(--success); border-color: var(--success); }
+        .check-box.checked::after { content: '✔'; color: white; font-size: 14px; font-weight: bold; }
+
+        .completed-section { margin-top: 30px; border-top: 2px dashed var(--border-color); padding-top: 20px; }
+        .completed-card { opacity: 0.6; border-left-color: var(--success); }
+
+        /* --- DENEME GİRİŞ TABLOSU --- */
+        .exam-subject-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; align-items: center; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color); }
+        .exam-subject-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .mini-input { width: 100%; padding: 6px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; font-weight: 600; font-size: 14px; outline: none; }
+        .mini-input:focus { border-color: var(--primary); }
+        .subject-label { font-size: 13px; font-weight: 700; color: var(--text-main); }
+        .subject-max { font-size: 10px; color: var(--text-muted); font-weight: 600; }
+        
+        .exam-detail-badge { font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #f1f5f9; color: var(--text-muted); margin-right: 4px; margin-top: 4px; display: inline-block; }
+
+        .btn { padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; width: 100%; font-size: 14px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: var(--border-color); color: var(--text-main); margin-top: 10px; }
+        .btn-ai { background: linear-gradient(135deg, var(--primary), var(--ai-color)); color: white; margin-top: 10px; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); }
+        
+        .custom-input, .custom-select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 12px; outline: none; font-weight: 600; font-size: 14px; background: #f8fafc; color: var(--text-main); }
+        .custom-input:focus, .custom-select:focus { border-color: var(--primary); background: #fff; }
+
+        .header-title { font-size: 24px; font-weight: 800; color: var(--primary); margin-bottom: 20px; letter-spacing: -0.5px;}
+        .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--text-main); }
+
+        #toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 30px; font-size: 13px; font-weight: 600; display: none; z-index: 2000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-align: center; min-width: 250px;}
     </style>
 </head>
 <body>
 
 <div class="app-container">
-
+    
+    <!-- KURULUM -->
     <div id="page-setup" class="page">
-        <div class="step-indicator">
-            <div class="dot active" id="dot-1"></div>
-            <div class="dot" id="dot-2"></div>
-            <div class="dot" id="dot-3"></div>
-        </div>
-
-        <div id="step-1" class="setup-step active">
-            <h2 class="gradient-text" style="font-size: 32px; margin-bottom: 8px;">Kayıt İşlemi</h2>
-            <p style="color: var(--text-muted); font-weight: 600; margin-bottom: 30px;">Sistemin size en uygun planı hazırlayabilmesi için bilgilerinizi giriniz.</p>
-            
-            <div class="input-group">
-                <label class="input-label">Adınız</label>
-                <input type="text" id="userName" class="custom-input" placeholder="Lütfen adınızı girin" autocomplete="off">
-            </div>
-            <div class="input-group">
-                <label class="input-label">Hedef Alanınız</label>
-                <select id="userField" class="custom-select">
-                    <option value="sayisal">Sayısal</option>
-                    <option value="ea">Eşit Ağırlık</option>
-                    <option value="sozel">Sözel</option>
-                    <option value="dil">Yabancı Dil</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label class="input-label">Güncel Seviyeniz</label>
-                <select id="userLevel" class="custom-select">
-                    <option value="temel">Temel Seviye</option>
-                    <option value="orta" selected>Orta Seviye</option>
-                    <option value="ileri">İleri Seviye</option>
-                </select>
-            </div>
-            <button class="btn btn-primary" onclick="nextStep(2)">Devam Et ➔</button>
-        </div>
-
-        <div id="step-2" class="setup-step">
-            <h2 class="gradient-text" style="font-size: 32px; margin-bottom: 8px;">Kütüphane</h2>
-            <p style="color: var(--text-muted); font-weight: 600; margin-bottom: 20px;">Sistemde kayıtlı kaynaklardan elinizde olanları işaretleyiniz.</p>
-            
-            <div id="systemBooksList" style="margin-bottom: 20px;">
-                </div>
-            
-            <div style="display: flex; gap: 10px;">
-                <button class="btn" style="background: #e2e8f0; color: #475569;" onclick="nextStep(1)">Geri</button>
-                <button class="btn btn-primary" onclick="nextStep(3)">Devam Et ➔</button>
-            </div>
-        </div>
-
-        <div id="step-3" class="setup-step">
-            <h2 class="gradient-text" style="font-size: 32px; margin-bottom: 8px;">Özel Kaynaklar</h2>
-            <p style="color: var(--text-muted); font-weight: 600; margin-bottom: 20px;">Sistemde bulunmayan kişisel kaynaklarınızı buraya ekleyebilirsiniz.</p>
-            
-            <div class="glass-card" style="padding: 20px; margin-bottom: 20px;">
-                <div class="input-group">
-                    
-                    <select id="customBookDers" class="custom-select" style="padding: 12px; margin-bottom: 10px;" onchange="checkDersTipi()">
-                        <option value="" disabled selected>Ders Seçiniz</option>
-                        <option value="Türkçe">Türkçe</option>
-                        <option value="Matematik">Matematik</option>
-                        <option value="Geometri">Geometri</option>
-                        <option value="Fizik">Fizik</option>
-                        <option value="Kimya">Kimya</option>
-                        <option value="Biyoloji">Biyoloji</option>
-                        <option value="Edebiyat">Edebiyat</option>
-                        <option value="Tarih">Tarih</option>
-                        <option value="Coğrafya">Coğrafya</option>
-                        <option value="Felsefe">Felsefe</option>
-                        <option value="Din Kültürü">Din Kültürü</option>
-                    </select>
-
-                    <div id="smartBadge" class="smart-badge">📌 <b>Sistem Bilgisi:</b> Türkçe sadece TYT kapsamındadır, otomatik ayarlandı.</div>
-
-                    <div id="sinavTipiContainer" style="display:none; margin-bottom: 10px;">
-                        <select id="customBookSinav" class="custom-select" style="padding: 12px;">
-                            <option value="TYT">TYT</option>
-                            <option value="AYT">AYT</option>
-                        </select>
-                    </div>
-
-                    <input type="text" id="customBookAd" class="custom-input" placeholder="Kitap Adı veya Yayın (Örn: 3D Yayınları)" style="padding: 12px; margin-bottom: 10px;">
-                    
-                    <select id="customBookZorluk" class="custom-select" style="padding: 12px; margin-bottom: 10px;">
-                        <option value="Kolay">Kolay Seviye</option>
-                        <option value="Orta" selected>Orta Seviye</option>
-                        <option value="Zor">Zor Seviye</option>
-                    </select>
-                    
-                    <button class="btn btn-success" style="padding: 12px; margin-top: 0;" onclick="addCustomBook()">Listeye Ekle</button>
-                </div>
-            </div>
-
-            <div id="myCustomBooksRender" style="margin-bottom: 20px; font-weight: 700; font-size: 14px; color: var(--primary);">Eklenen Özel Kaynak Sayısı: 0</div>
-
-            <div style="display: flex; gap: 10px;">
-                <button class="btn" style="background: #e2e8f0; color: #475569;" onclick="nextStep(2)">Geri</button>
-                <button class="btn btn-primary" onclick="finishSetup()">Sistemi Başlat</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="page-home" class="page">
-        <div class="header">
-            <div>
-                <h1 class="gradient-text" id="welcomeText">Merhaba</h1>
-                <p style="font-size: 13px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-top: 2px;" id="userSubText">Yükleniyor...</p>
-            </div>
-            <div class="profile-btn" onclick="resetProfile()" title="Ayarları Sıfırla">⚙️</div>
-        </div>
-
-        <div class="info-panel">
-            <div class="glass-card mini-card">
-                <h3>YKS'YE KALAN</h3>
-                <p id="countdown-text" style="color: var(--danger);">-- Gün</p>
-            </div>
-            <div class="glass-card mini-card">
-                <h3>KAYITLI KAYNAK</h3>
-                <p id="totalBooksText" style="color: var(--primary);">-- Kitap</p>
-            </div>
-        </div>
-
-        <h2 style="font-size: 20px; font-weight: 900; margin: 30px 0 16px 0;">Bugünkü Planınız</h2>
+        <h1 class="header-title" style="margin-top: 50px;">Akıllı Rota</h1>
+        <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 14px;">Sistemi başlatmak için profilinizi oluşturun.</p>
         
-        <div id="taskList" class="task-list"></div>
-
-        <button class="btn btn-success" onclick="giveMeMore()">
-            <span style="font-size: 22px;">+</span> Ekstra Görev Ekle
-        </button>
+        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted);">ÖĞRENCİ ADI</label>
+        <input type="text" id="setupName" class="custom-input" placeholder="Ad Soyad" autocomplete="off">
+        
+        <button class="btn btn-primary" style="margin-top: 20px;" onclick="completeSetup()">Sistemi Başlat</button>
     </div>
 
-    <div id="toast">Bildirim</div>
+    <!-- ANA SAYFA -->
+    <div id="page-home" class="page">
+        <h1 class="header-title">Akıllı Rota</h1>
+        
+        <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+            <div class="card" style="flex: 1; margin: 0; text-align: center;">
+                <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">YKS'YE KALAN</div>
+                <div id="daysLeft" style="font-size: 22px; font-weight: 800; color: var(--primary);">--</div>
+            </div>
+            <div class="card" style="flex: 1; margin: 0; text-align: center;">
+                <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">GÜNLÜK VERİM</div>
+                <div id="statsText" style="font-size: 22px; font-weight: 800; color: var(--success);">0/0</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Güncel Görevler</h2>
+        <div id="activeTasksList"></div>
+        
+        <button class="btn btn-secondary" onclick="addExtraTask()">+ Manuel Görev Ata</button>
+        <button class="btn btn-ai" onclick="analyzeAndAssign()">✨ Analiz Et & Ödevlendir</button>
+
+        <div class="completed-section" id="completedContainer" style="display: none;">
+            <h2 class="section-title" style="color: var(--success);">Tamamlananlar</h2>
+            <div id="completedTasksList"></div>
+        </div>
+    </div>
+
+    <!-- DENEMELER -->
+    <div id="page-exams" class="page">
+        <h1 class="header-title">Deneme Raporları</h1>
+        
+        <div class="card">
+            <h2 class="section-title" style="font-size: 14px;">Yeni Sonuç Girişi</h2>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                <select id="examTypeSelect" class="custom-select" style="margin-bottom: 0;" onchange="renderExamForm()">
+                    <option value="TYT">TYT Genel</option>
+                    <option value="AYT-SAY">AYT Sayısal</option>
+                    <option value="AYT-EA">AYT Eşit Ağırlık</option>
+                    <option value="AYT-SOZ">AYT Sözel</option>
+                </select>
+                <input type="date" id="examDate" class="custom-input" style="margin-bottom: 0; width: 130px;">
+            </div>
+
+            <input type="text" id="examName" class="custom-input" placeholder="Deneme Adı / Yayın (Örn: 3D Türkiye Geneli)">
+            
+            <div style="background: var(--bg-main); padding: 12px; border-radius: 12px; margin-bottom: 15px;">
+                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                    <span style="font-size: 10px; font-weight: 800; color: var(--text-muted);">BRANŞ</span>
+                    <span style="font-size: 10px; font-weight: 800; color: var(--success); text-align: center;">DOĞRU</span>
+                    <span style="font-size: 10px; font-weight: 800; color: var(--danger); text-align: center;">YANLIŞ</span>
+                </div>
+                <div id="examFormContainer"></div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="saveExamResult()">Verileri Kaydet</button>
+        </div>
+
+        <h2 class="section-title" style="margin-top: 24px;">Kayıtlı Analizler</h2>
+        <div id="examResultsList"></div>
+    </div>
+
+    <!-- KÜTÜPHANE -->
+    <div id="page-library" class="page">
+        <h1 class="header-title">Kütüphane Yönetimi</h1>
+        
+        <div class="card">
+            <h2 class="section-title" style="font-size: 14px;">Yeni Kaynak Ekle</h2>
+            <div style="display: flex; gap: 10px;">
+                <select id="libCategory" class="custom-select" onchange="updateSubjectOptions()">
+                    <option value="TYT">TYT</option>
+                    <option value="AYT-SAY">AYT Sayısal</option>
+                    <option value="AYT-EA">AYT Eşit Ağırlık</option>
+                    <option value="AYT-SOZ">AYT Sözel</option>
+                </select>
+                <select id="libBookDers" class="custom-select"></select>
+            </div>
+            <input type="text" id="libBookName" class="custom-input" placeholder="Kaynak Adı (Örn: Orijinal Fasikül)">
+            <button class="btn btn-primary" onclick="addNewCustomBook()">Sisteme Ekle</button>
+        </div>
+
+        <h2 class="section-title" style="margin-top: 24px;">Kayıtlı Kaynaklar</h2>
+        <div id="fullLibraryList"></div>
+    </div>
+
+    <!-- ALT NAVİGASYON -->
+    <nav class="bottom-nav" id="mainNav" style="display: none;">
+        <div class="nav-item active" onclick="showTab('home', this)">
+            <span style="font-size: 20px;">📋</span><span>Plan</span>
+        </div>
+        <div class="nav-item" onclick="showTab('exams', this)">
+            <span style="font-size: 20px;">📈</span><span>Analiz</span>
+        </div>
+        <div class="nav-item" onclick="showTab('library', this)">
+            <span style="font-size: 20px;">📚</span><span>Kütüphane</span>
+        </div>
+    </nav>
+    <div id="toast"></div>
 </div>
 
 <script>
-    // --- SİSTEM VERİTABANI ---
-    const systemDatabase = [
-        { id: 1, ders: "TYT Matematik", ad: "3D Yayınları", zorluk: "Zor", hedef: "Süre tutarak 3 test bitirin." },
-        { id: 2, ders: "TYT Türkçe", ad: "Limit Paragraf", zorluk: "Orta", hedef: "Odaklanarak 40 soru çözün." },
-        { id: 3, ders: "AYT Fizik", ad: "Apotemi Fasikülleri", zorluk: "Çok Zor", hedef: "Konu özeti okuyun ve 2 test çözün." },
-        { id: 4, ders: "TYT Geometri", ad: "Kenan Kara Notları", zorluk: "Orta", hedef: "Konu testlerini eksiksiz tamamlayın." },
-        { id: 5, ders: "Genel Deneme", ad: "TYT Çıkmış Yıllar", zorluk: "Karma", hedef: "135 dakika süreyle tam deneme çözün." }
+    // --- VERİTABANI & YAPILANDIRMA ---
+    const defaultBooks = [
+        { id: 1, ad: "3D Yayınları", ders: "TYT Matematik" },
+        { id: 2, ad: "Limit Kronometre", ders: "TYT Türkçe" },
+        { id: 3, ad: "Apotemi Fasikül", ders: "AYT Matematik" }
     ];
 
-    let appData = { profile: {}, ownedSystemBookIds: [], customBooks: [], myLibrary: [], todaysPlan: [] };
+    const examTemplates = {
+        'TYT': [
+            { id: 'tr', name: 'Türkçe', max: 40 },
+            { id: 'mat', name: 'Matematik', max: 40 },
+            { id: 'fiz', name: 'Fizik', max: 7 },
+            { id: 'kim', name: 'Kimya', max: 7 },
+            { id: 'biy', name: 'Biyoloji', max: 6 },
+            { id: 'tar', name: 'Tarih', max: 5 },
+            { id: 'cog', name: 'Coğrafya', max: 5 },
+            { id: 'fel', name: 'Felsefe', max: 5 },
+            { id: 'din', name: 'Din Kültürü', max: 5 }
+        ],
+        'AYT-SAY': [
+            { id: 'mat', name: 'Matematik', max: 40 },
+            { id: 'fiz', name: 'Fizik', max: 14 },
+            { id: 'kim', name: 'Kimya', max: 13 },
+            { id: 'biy', name: 'Biyoloji', max: 13 }
+        ],
+        'AYT-EA': [
+            { id: 'mat', name: 'Matematik', max: 40 },
+            { id: 'edb', name: 'Edebiyat', max: 24 },
+            { id: 'tar1', name: 'Tarih-1', max: 10 },
+            { id: 'cog1', name: 'Coğrafya-1', max: 6 }
+        ],
+        'AYT-SOZ': [
+            { id: 'edb', name: 'Edebiyat', max: 24 },
+            { id: 'tar1', name: 'Tarih-1', max: 10 },
+            { id: 'cog1', name: 'Coğrafya-1', max: 6 },
+            { id: 'tar2', name: 'Tarih-2', max: 11 },
+            { id: 'cog2', name: 'Coğrafya-2', max: 11 },
+            { id: 'fel', name: 'Felsefe Grubu', max: 12 },
+            { id: 'din', name: 'Din Kültürü', max: 6 }
+        ]
+    };
 
-    window.addEventListener('DOMContentLoaded', () => {
-        calculateCountdown();
-        checkProfile();
-    });
+    let db = { user: null, library: [...defaultBooks], plan: [], completed: [], exams: [] };
 
-    function checkProfile() {
-        const savedData = localStorage.getItem('akilli_rota_data');
-        if (!savedData) {
-            renderSystemBooks();
+    window.onload = () => {
+        const saved = localStorage.getItem('akilli_rota_ai');
+        if (saved) {
+            db = JSON.parse(saved);
+            if (!db.exams) db.exams = [];
+            startApp();
+        } else {
             showPage('setup');
-        } else {
-            appData = JSON.parse(savedData);
-            updateDashboard();
-            generateDailyPlan();
-            showPage('home');
         }
+        updateCountdown();
+        updateSubjectOptions();
+        
+        document.getElementById('examDate').value = new Date().toISOString().split('T')[0];
+        renderExamForm();
+    };
+
+    function startApp() {
+        document.getElementById('mainNav').style.display = 'flex';
+        if (db.plan.length === 0) generateDailyPlan();
+        renderPlan();
+        renderLibrary();
+        renderExams();
+        showPage('home');
     }
 
-    function nextStep(stepNum) {
-        document.querySelectorAll('.setup-step').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.dot').forEach(el => el.classList.remove('active'));
-        document.getElementById(`step-${stepNum}`).classList.add('active');
-        document.getElementById(`dot-${stepNum}`).classList.add('active');
+    function completeSetup() {
+        const name = document.getElementById('setupName').value.trim();
+        if (!name) return showToast("Sistemi başlatmak için isim girilmelidir.");
+        db.user = { name };
+        save();
+        startApp();
     }
 
-    function renderSystemBooks() {
-        const list = document.getElementById('systemBooksList');
-        list.innerHTML = '';
-        systemDatabase.forEach(book => {
-            const isChecked = appData.ownedSystemBookIds?.includes(book.id);
-            const html = `
-                <div class="glass-card book-item ${isChecked ? 'selected' : ''}" onclick="toggleBook(this, ${book.id})">
-                    <div class="book-info">
-                        <h4>${book.ad}</h4>
-                        <p>${book.ders} • ${book.zorluk}</p>
-                    </div>
-                    <div class="toggle-switch"></div>
+    // --- DENEME VE ANALİZ MODÜLÜ ---
+    function renderExamForm() {
+        const type = document.getElementById('examTypeSelect').value;
+        const template = examTemplates[type];
+        const container = document.getElementById('examFormContainer');
+        
+        container.innerHTML = template.map(sub => `
+            <div class="exam-subject-row" data-sub-id="${sub.id}" data-sub-name="${sub.name}" data-sub-max="${sub.max}">
+                <div>
+                    <div class="subject-label">${sub.name}</div>
+                    <div class="subject-max">${sub.max} Soru</div>
                 </div>
-            `;
-            list.insertAdjacentHTML('beforeend', html);
+                <input type="number" class="mini-input dogru-input" placeholder="D" min="0" max="${sub.max}">
+                <input type="number" class="mini-input yanlis-input" placeholder="Y" min="0" max="${sub.max}">
+            </div>
+        `).join('');
+    }
+
+    function saveExamResult() {
+        const type = document.getElementById('examTypeSelect').value;
+        const name = document.getElementById('examName').value.trim();
+        const date = document.getElementById('examDate').value;
+        
+        if (!name) return showToast("Lütfen deneme adını giriniz.");
+
+        const rows = document.querySelectorAll('.exam-subject-row');
+        let subjectsData = [];
+        let totalNet = 0;
+        let isValid = true;
+
+        rows.forEach(row => {
+            const subName = row.getAttribute('data-sub-name');
+            const max = parseInt(row.getAttribute('data-sub-max'));
+            let d = parseInt(row.querySelector('.dogru-input').value) || 0;
+            let y = parseInt(row.querySelector('.yanlis-input').value) || 0;
+            
+            if (d + y > max) {
+                isValid = false;
+                return;
+            }
+
+            let b = max - (d + y);
+            let net = d - (y / 4);
+            totalNet += net;
+
+            subjectsData.push({ name: subName, max: max, dogru: d, yanlis: y, bos: b, net: parseFloat(net.toFixed(2)) });
         });
+
+        if (!isValid) return showToast("Hata: Doğru ve Yanlış toplamı soru sayısını geçemez!");
+
+        db.exams.push({ 
+            id: Date.now(), 
+            type: type, 
+            name: name, 
+            date: date, 
+            totalNet: parseFloat(totalNet.toFixed(2)),
+            subjects: subjectsData 
+        });
+        
+        document.getElementById('examName').value = "";
+        renderExamForm();
+        save();
+        renderExams();
+        showToast("Veriler sisteme işlendi.");
     }
 
-    function toggleBook(element, id) {
-        element.classList.toggle('selected');
-        if(!appData.ownedSystemBookIds) appData.ownedSystemBookIds = [];
-        
-        if(appData.ownedSystemBookIds.includes(id)) {
-            appData.ownedSystemBookIds = appData.ownedSystemBookIds.filter(bId => bId !== id);
-        } else {
-            appData.ownedSystemBookIds.push(id);
-        }
-    }
-
-    // --- DERS KONTROL ALGORİTMASI ---
-    let zekiSinavTipi = ""; 
-    
-    function checkDersTipi() {
-        const ders = document.getElementById('customBookDers').value;
-        const sinavContainer = document.getElementById('sinavTipiContainer');
-        const smartBadge = document.getElementById('smartBadge');
-        
-        const sadeceTYT = ['Türkçe', 'Felsefe', 'Din Kültürü'];
-        const sadeceAYT = ['Edebiyat'];
-        
-        if(sadeceTYT.includes(ders)) {
-            sinavContainer.style.display = 'none';
-            smartBadge.style.display = 'block';
-            smartBadge.innerHTML = `📌 <b>Sistem Bilgisi:</b> ${ders} sadece TYT kapsamındadır, otomatik ayarlandı.`;
-            zekiSinavTipi = "TYT";
-        } 
-        else if(sadeceAYT.includes(ders)) {
-            sinavContainer.style.display = 'none';
-            smartBadge.style.display = 'block';
-            smartBadge.innerHTML = `📌 <b>Sistem Bilgisi:</b> ${ders} sadece AYT kapsamındadır, otomatik ayarlandı.`;
-            zekiSinavTipi = "AYT";
-        } 
-        else {
-            sinavContainer.style.display = 'block';
-            smartBadge.style.display = 'none';
-            zekiSinavTipi = ""; 
-        }
-    }
-
-    function addCustomBook() {
-        const dersSecimi = document.getElementById('customBookDers').value;
-        const ad = document.getElementById('customBookAd').value.trim();
-        const zorluk = document.getElementById('customBookZorluk').value;
-
-        if(!dersSecimi || !ad) {
-            showToast("Lütfen ders seçimi yapın ve kitap adını girin.");
+    function renderExams() {
+        const list = document.getElementById('examResultsList');
+        if (db.exams.length === 0) {
+            list.innerHTML = `<p style="font-size:14px; color:var(--text-muted); text-align:center; padding: 20px 0;">Sistemde kayıtlı deneme bulunmamaktadır.</p>`;
             return;
         }
 
-        let finalDersAdi = "";
-        if (zekiSinavTipi !== "") {
-            finalDersAdi = zekiSinavTipi + " " + dersSecimi;
-        } else {
-            const kullaniciSecimi = document.getElementById('customBookSinav').value;
-            finalDersAdi = kullaniciSecimi + " " + dersSecimi;
-        }
+        const sortedExams = [...db.exams].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        if(!appData.customBooks) appData.customBooks = [];
+        list.innerHTML = sortedExams.map(exam => {
+            const isTYT = exam.type === 'TYT';
+            const badgeBg = isTYT ? 'var(--bg-main)' : 'var(--ayt-bg)';
+            const badgeColor = isTYT ? 'var(--primary)' : 'var(--ayt-color)';
+            
+            const dateObj = new Date(exam.date);
+            const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}.${(dateObj.getMonth() + 1).toString().padStart(2, '0')}.${dateObj.getFullYear()}`;
+
+            const detailsHtml = (exam.subjects || []).map(sub => 
+                `<span class="exam-detail-badge">${sub.name}: ${sub.net}</span>`
+            ).join('');
+
+            return `
+                <div class="card" style="border-left: 4px solid ${badgeColor};">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div>
+                            <div class="task-badge" style="background:${badgeBg}; color:${badgeColor};">${exam.type}</div>
+                            <div style="font-size:15px; font-weight:700; margin-top:4px;">${exam.name}</div>
+                            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">🗓️ ${formattedDate}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:22px; font-weight:800; color:var(--text-main); line-height: 1;">${exam.totalNet}</div>
+                            <div style="font-size:10px; font-weight:800; color:var(--text-muted); margin-top:2px;">TOPLAM NET</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-color);">
+                        ${detailsHtml}
+                    </div>
+                    <button onclick="removeExam(${exam.id})" style="width: 100%; background: #fef2f2; color: var(--danger); border: none; border-radius: 8px; padding: 6px; font-weight: 700; font-size: 12px; margin-top: 10px; cursor:pointer;">Sonucu Sil</button>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function removeExam(id) {
+        if(confirm("Bu analiz raporunu silmek istediğinizden emin misiniz?")) {
+            db.exams = db.exams.filter(e => e.id !== id);
+            save();
+            renderExams();
+        }
+    }
+
+    // --- YAPAY ZEKA ÖDEVLENDİRME ---
+    function analyzeAndAssign() {
+        if (db.exams.length === 0) return showToast("Sistem Uyarısı: Analiz için en az 1 deneme gereklidir.");
         
-        appData.customBooks.push({
-            id: 'custom_' + Date.now(),
-            ders: finalDersAdi,
-            ad: ad,
-            zorluk: zorluk,
-            hedef: "Konu akışına uygun olarak en az 2 test çözün.",
-            isCustom: true
+        let latestExam = [...db.exams].sort((a,b) => b.id - a.id)[0];
+        if (!latestExam.subjects) return showToast("Eski format denemeler analiz edilemiyor.");
+
+        let worstSubject = null;
+        let lowestRatio = 100;
+
+        latestExam.subjects.forEach(sub => {
+            let ratio = sub.net / sub.max;
+            if (ratio < lowestRatio) {
+                lowestRatio = ratio;
+                worstSubject = sub.name;
+            }
         });
 
-        document.getElementById('customBookDers').value = '';
-        document.getElementById('customBookAd').value = '';
-        document.getElementById('sinavTipiContainer').style.display = 'none';
-        document.getElementById('smartBadge').style.display = 'none';
-        zekiSinavTipi = "";
+        // Kütüphaneden zayıf branşa ait uygun kitap bul
+        let targetBook = db.library.find(b => b.ders.includes(worstSubject));
 
-        document.getElementById('myCustomBooksRender').innerText = `Eklenen Özel Kaynak Sayısı: ${appData.customBooks.length}`;
-        showToast("Özel kaynak başarıyla eklendi.");
+        if (targetBook) {
+            let alreadyAssigned = db.plan.some(p => p.id === targetBook.id && p.isAi);
+            if (!alreadyAssigned) {
+                db.plan.push({
+                    ...targetBook,
+                    instanceId: 'task_ai_' + Date.now(),
+                    target: `Eksik Kapatma (2 Test)`,
+                    isAi: true
+                });
+                save();
+                renderPlan();
+                showToast(`Analiz: ${worstSubject} netleriniz düşük. Yeni görev atandı.`);
+            } else {
+                showToast(`Analiz: ${worstSubject} için zaten göreviniz bulunuyor.`);
+            }
+        } else {
+            showToast(`Analiz: ${worstSubject} eksiğiniz var ancak kütüphanede uygun kaynak bulunamadı.`);
+        }
     }
 
-    function finishSetup() {
-        const name = document.getElementById('userName').value.trim();
-        if(!name) { showToast("Lütfen ilk adımdaki isim alanını doldurun."); nextStep(1); return; }
-
-        appData.profile = { name: name, field: document.getElementById('userField').value, level: document.getElementById('userLevel').value };
-
-        const selectedSystemBooks = systemDatabase.filter(b => appData.ownedSystemBookIds.includes(b.id));
-        appData.myLibrary = [...selectedSystemBooks, ...(appData.customBooks || [])];
-
-        if(appData.myLibrary.length === 0) { showToast("Kütüphaneniz boş. Lütfen kaynak seçimi yapın."); return; }
-
-        localStorage.setItem('akilli_rota_data', JSON.stringify(appData));
-        updateDashboard(); generateDailyPlan(); showPage('home');
+    // --- KÜTÜPHANE & GÖREV FONKSİYONLARI ---
+    function updateSubjectOptions() {
+        const cat = document.getElementById('libCategory').value;
+        const dersSelect = document.getElementById('libBookDers');
+        dersSelect.innerHTML = '';
+        
+        let list = [];
+        if(cat === 'TYT') list = ["TYT Türkçe", "TYT Matematik", "TYT Geometri", "TYT Fizik", "TYT Kimya", "TYT Biyoloji", "TYT Tarih", "TYT Coğrafya", "TYT Felsefe", "TYT Din Kültürü"];
+        else if(cat === 'AYT-SAY') list = ["AYT Matematik", "AYT Geometri", "AYT Fizik", "AYT Kimya", "AYT Biyoloji"];
+        else if(cat === 'AYT-EA') list = ["AYT Matematik", "AYT Geometri", "Edebiyat", "Tarih-1", "Coğrafya-1"];
+        else if(cat === 'AYT-SOZ') list = ["Edebiyat", "Tarih-1", "Coğrafya-1", "Tarih-2", "Coğrafya-2", "Felsefe Grubu", "Din Kültürü"];
+            
+        list.forEach(ders => {
+            dersSelect.insertAdjacentHTML('beforeend', `<option value="${ders}">${ders}</option>`);
+        });
     }
 
-    function resetProfile() {
-        showToast("Veriler temizleniyor...");
-        setTimeout(() => { localStorage.removeItem('akilli_rota_data'); location.reload(); }, 1000);
-    }
-
-    function updateDashboard() {
-        document.getElementById('welcomeText').innerText = `Merhaba, ${appData.profile.name}`;
-        document.getElementById('userSubText').innerText = `${appData.profile.field} • ${appData.profile.level} Seviye`;
-        document.getElementById('totalBooksText').innerText = `${appData.myLibrary.length}`;
-    }
-
-    function calculateCountdown() {
-        const examDate = new Date('2026-06-20T00:00:00');
-        const diffDays = Math.ceil((examDate - new Date()) / (1000 * 60 * 60 * 24));
-        document.getElementById('countdown-text').innerText = diffDays > 0 ? `${diffDays}` : "Bugün!";
+    function addNewCustomBook() {
+        const name = document.getElementById('libBookName').value.trim();
+        const ders = document.getElementById('libBookDers').value;
+        if (!name) return showToast("Kaynak adı gereklidir.");
+        db.library.push({ id: Date.now(), ad: name, ders: ders });
+        document.getElementById('libBookName').value = "";
+        save(); renderLibrary(); showToast("Kaynak eklendi.");
     }
 
     function generateDailyPlan() {
-        document.getElementById('taskList').innerHTML = "";
-        appData.todaysPlan = [];
-        let pool = [...appData.myLibrary].sort(() => 0.5 - Math.random());
-        let selection = pool.slice(0, 2);
-        selection.forEach((task, index) => { appData.todaysPlan.push(task); renderTask(task, index + 1, false); });
+        const selected = db.library.sort(() => 0.5 - Math.random()).slice(0, 3);
+        db.plan = selected.map(book => ({
+            ...book,
+            instanceId: 'task_' + Date.now() + Math.random().toString(36).substr(2, 5),
+            target: book.ders.includes("Türkçe") ? "40 Soru Çözümü" : "3 Test Çözümü"
+        }));
+        save();
     }
 
-    function giveMeMore() {
-        let unusedBooks = appData.myLibrary.filter(book => !appData.todaysPlan.some(p => p.id === book.id));
-        if(unusedBooks.length > 0) {
-            let extraTask = unusedBooks[Math.floor(Math.random() * unusedBooks.length)];
-            appData.todaysPlan.push(extraTask);
-            renderTask(extraTask, appData.todaysPlan.length, true);
-            setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 50);
+    function renderPlan() {
+        const activeList = document.getElementById('activeTasksList');
+        const completedList = document.getElementById('completedTasksList');
+        const completedSection = document.getElementById('completedContainer');
+        
+        activeList.innerHTML = ''; completedList.innerHTML = '';
+        let hasCompleted = false;
+
+        db.plan.forEach(task => {
+            const isDone = db.completed.includes(task.instanceId);
+            const badgeClass = task.isAi ? 'task-badge ai-badge' : 'task-badge';
+            const badgeText = task.isAi ? `✨ AI: ${task.ders}` : task.ders;
+
+            const html = `
+                <div class="card task-card ${isDone ? 'completed-card' : ''}">
+                    <div class="task-info">
+                        <div class="${badgeClass}">${badgeText}</div>
+                        <div class="task-title">${task.ad}</div>
+                        <div class="task-target">🎯 ${task.target}</div>
+                    </div>
+                    <div class="check-box ${isDone ? 'checked' : ''}" onclick="toggleTaskStatus('${task.instanceId}')"></div>
+                </div>
+            `;
+
+            if (isDone) { completedList.insertAdjacentHTML('beforeend', html); hasCompleted = true; } 
+            else { activeList.insertAdjacentHTML('beforeend', html); }
+        });
+
+        completedSection.style.display = hasCompleted ? 'block' : 'none';
+        if (activeList.innerHTML === '') activeList.innerHTML = `<p style="font-size:13px; color:var(--text-muted); text-align:center; padding: 15px 0;">Görev kalmadı. Analiz ile yeni görev talep edebilirsiniz.</p>`;
+        
+        updateStats();
+    }
+
+    function toggleTaskStatus(instanceId) {
+        if (db.completed.includes(instanceId)) db.completed = db.completed.filter(id => id !== instanceId);
+        else { db.completed.push(instanceId); showToast("Görev başarıyla tamamlandı."); }
+        save(); renderPlan();
+    }
+
+    function addExtraTask() {
+        const unused = db.library.filter(b => !db.plan.some(p => p.id === b.id));
+        if (unused.length > 0) {
+            const book = unused[Math.floor(Math.random() * unused.length)];
+            db.plan.push({ ...book, instanceId: 'task_' + Date.now(), target: "Ekstra Görev: 2 Test" });
+            save(); renderPlan(); showToast("Manuel görev atandı.");
         } else {
-            showToast(`Tebrikler ${appData.profile.name}. Kütüphanenizdeki tüm kaynakları bugünkü plana eklediniz.`);
+            showToast("Kütüphanedeki tüm kaynaklar aktif planda.");
         }
     }
 
-    function renderTask(task, index, isExtra) {
-        const list = document.getElementById('taskList');
-        const extraClass = isExtra ? 'extra' : '';
-        const badgeText = isExtra ? 'EKSTRA GÖREV' : 'ZORUNLU GÖREV';
-
-        const html = `
-            <div class="glass-card task-card ${extraClass}">
-                <div class="task-header">
-                    <h3 class="task-title">${task.ders}</h3>
-                    <span class="task-badge">${badgeText}</span>
+    function renderLibrary() {
+        const list = document.getElementById('fullLibraryList');
+        list.innerHTML = db.library.map(book => `
+            <div class="card" style="padding: 12px; margin-bottom: 10px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <div style="font-size:14px; font-weight:700;">${book.ad}</div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${book.ders}</div>
                 </div>
-                <div class="task-goal">Hedef: ${task.hedef}</div>
-                <div class="task-source"><span>📚 ${task.ad}</span> • <span>⚡ ${task.zorluk}</span></div>
+                <button onclick="removeBook(${book.id})" style="background:none; border:none; color:var(--danger); font-size:18px; cursor:pointer;">×</button>
             </div>
-        `;
-        list.insertAdjacentHTML('beforeend', html);
+        `).join('');
     }
 
-    function showPage(pageId) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(`page-${pageId}`).classList.add('active');
+    function removeBook(id) {
+        if(confirm("Kaynağı silmek istediğinize emin misiniz?")) {
+            db.library = db.library.filter(b => b.id !== id);
+            save(); renderLibrary();
+        }
     }
 
+    // --- UTILS ---
+    function save() { localStorage.setItem('akilli_rota_ai', JSON.stringify(db)); }
+    function showPage(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-' + id).classList.add('active'); }
+    function showTab(tab, el) { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); showPage(tab); }
+    function updateCountdown() {
+        const diff = Math.ceil((new Date('2026-06-20') - new Date()) / (1000*60*60*24));
+        document.getElementById('daysLeft').innerText = diff > 0 ? diff : "Bugün";
+    }
+    function updateStats() {
+        const total = db.plan.length;
+        const done = db.completed.filter(id => db.plan.some(p => p.instanceId === id)).length;
+        document.getElementById('statsText').innerText = `${done}/${total}`;
+    }
     function showToast(msg) {
-        const toast = document.getElementById('toast'); toast.innerText = msg;
-        toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2500);
+        const t = document.getElementById('toast'); t.innerText = msg;
+        t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000);
     }
 </script>
-
 </body>
 </html>
