@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Akıllı Rota</title>
+    <script src="https://js.puter.com/v2/"></script>
     <style>
         /* --- PREMIUM CSS & YKS OPTİMİZASYONU --- */
         :root {
@@ -19,6 +20,7 @@
             --ayt-color: #db2777;
             --ayt-bg: #fce7f3;
             --ai-color: #8b5cf6;
+            --ai-bg: #ede9fe;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -27,21 +29,24 @@
 
         .app-container { width: 100%; max-width: 500px; height: 100%; display: flex; flex-direction: column; position: relative; background: var(--bg-main); }
 
-        .page { display: none; flex: 1; padding: 25px 20px 100px 20px; overflow-y: auto; animation: fadeIn 0.2s ease; }
+        .page { display: none; flex: 1; padding: 25px 20px 90px 20px; overflow-y: auto; animation: fadeIn 0.2s ease; }
         .page.active { display: block; }
+        
+        #page-coach.active { display: flex; flex-direction: column; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); padding: 16px; margin-bottom: 16px; }
 
         .bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: 70px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); cursor: pointer; width: 33.3%; font-size: 12px; font-weight: 600; gap: 4px; transition: 0.2s; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); cursor: pointer; width: 25%; font-size: 11px; font-weight: 700; gap: 4px; transition: 0.2s; }
         .nav-item.active { color: var(--primary); }
 
         /* --- GÖREV KARTLARI --- */
         .task-card { display: flex; align-items: center; justify-content: space-between; border-left: 4px solid var(--primary); transition: 0.3s; }
         .task-info { flex: 1; }
         .task-badge { font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #e0e7ff; color: var(--primary); display: inline-block; margin-bottom: 6px; letter-spacing: 0.5px;}
-        .task-badge.ai-badge { background: #ede9fe; color: var(--ai-color); }
+        .task-badge.ai-badge { background: var(--ai-bg); color: var(--ai-color); }
         .task-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
         .task-target { font-size: 13px; font-weight: 600; color: #d97706; background: #fef3c7; padding: 4px 8px; border-radius: 6px; display: inline-block; }
 
@@ -62,6 +67,14 @@
         
         .exam-detail-badge { font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #f1f5f9; color: var(--text-muted); margin-right: 4px; margin-top: 4px; display: inline-block; }
 
+        /* --- SOHBET (CHAT) ARAYÜZÜ --- */
+        .chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 10px; }
+        .msg-bubble { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 14px; font-weight: 500; line-height: 1.5; }
+        .msg-user { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+        .msg-ai { align-self: flex-start; background: white; border: 1px solid var(--border-color); color: var(--text-main); border-bottom-left-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .msg-ai b { color: var(--ai-color); font-weight: 800; }
+        .typing-indicator { font-size: 12px; color: var(--text-muted); font-style: italic; display: none; align-self: flex-start; margin-left: 10px; }
+
         .btn { padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; width: 100%; font-size: 14px; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-secondary { background: var(--border-color); color: var(--text-main); margin-top: 10px; }
@@ -80,7 +93,6 @@
 
 <div class="app-container">
     
-    <!-- KURULUM -->
     <div id="page-setup" class="page">
         <h1 class="header-title" style="margin-top: 50px;">Akıllı Rota</h1>
         <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 14px;">Sistemi başlatmak için profilinizi oluşturun.</p>
@@ -91,7 +103,6 @@
         <button class="btn btn-primary" style="margin-top: 20px;" onclick="completeSetup()">Sistemi Başlat</button>
     </div>
 
-    <!-- ANA SAYFA -->
     <div id="page-home" class="page">
         <h1 class="header-title">Akıllı Rota</h1>
         
@@ -108,9 +119,7 @@
 
         <h2 class="section-title">Güncel Görevler</h2>
         <div id="activeTasksList"></div>
-        
         <button class="btn btn-secondary" onclick="addExtraTask()">+ Manuel Görev Ata</button>
-        <button class="btn btn-ai" onclick="analyzeAndAssign()">✨ Analiz Et & Ödevlendir</button>
 
         <div class="completed-section" id="completedContainer" style="display: none;">
             <h2 class="section-title" style="color: var(--success);">Tamamlananlar</h2>
@@ -118,13 +127,13 @@
         </div>
     </div>
 
-    <!-- DENEMELER -->
     <div id="page-exams" class="page">
         <h1 class="header-title">Deneme Raporları</h1>
         
+        <button class="btn btn-ai" style="margin-bottom: 16px;" onclick="sendLatestExamToCoach()">✨ Son Denemeyi Koç ile Analiz Et</button>
+
         <div class="card">
             <h2 class="section-title" style="font-size: 14px;">Yeni Sonuç Girişi</h2>
-            
             <div style="display: flex; gap: 10px; margin-bottom: 12px;">
                 <select id="examTypeSelect" class="custom-select" style="margin-bottom: 0;" onchange="renderExamForm()">
                     <option value="TYT">TYT Genel</option>
@@ -153,7 +162,22 @@
         <div id="examResultsList"></div>
     </div>
 
-    <!-- KÜTÜPHANE -->
+    <div id="page-coach" class="page">
+        <h1 class="header-title" style="color: var(--ai-color);">Akıllı Koç</h1>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600;">Sistem Analizleri ve Ödev Özelleştirme Merkezi</p>
+        
+        <div id="chatContainer" class="chat-box">
+            <div class="msg-bubble msg-ai"><b>Sistem:</b> Merhaba, ben Akıllı Rota resmi koçunuz. Deneme verilerinizi analiz etmek ve size uygun stratejiyi belirlemek için buradayım. Planınızı değiştirmek veya itiraz etmek isterseniz buradan bana ulaşabilirsiniz.</div>
+        </div>
+        
+        <div id="typingIndicator" class="typing-indicator">Koç yazıyor...</div>
+
+        <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <input type="text" id="chatInput" class="custom-input" style="margin: 0;" placeholder="Ödev değişikliği talep et veya soru sor..." onkeypress="handleChatEnter(event)">
+            <button class="btn btn-primary" style="width: auto; background: var(--ai-color); padding: 0 20px;" onclick="sendUserMessage()">Gönder</button>
+        </div>
+    </div>
+
     <div id="page-library" class="page">
         <h1 class="header-title">Kütüphane Yönetimi</h1>
         
@@ -176,23 +200,17 @@
         <div id="fullLibraryList"></div>
     </div>
 
-    <!-- ALT NAVİGASYON -->
     <nav class="bottom-nav" id="mainNav" style="display: none;">
-        <div class="nav-item active" onclick="showTab('home', this)">
-            <span style="font-size: 20px;">📋</span><span>Plan</span>
-        </div>
-        <div class="nav-item" onclick="showTab('exams', this)">
-            <span style="font-size: 20px;">📈</span><span>Analiz</span>
-        </div>
-        <div class="nav-item" onclick="showTab('library', this)">
-            <span style="font-size: 20px;">📚</span><span>Kütüphane</span>
-        </div>
+        <div class="nav-item active" onclick="showTab('home', this)"><span style="font-size: 20px;">📋</span><span>Plan</span></div>
+        <div class="nav-item" onclick="showTab('exams', this)"><span style="font-size: 20px;">📈</span><span>Analiz</span></div>
+        <div class="nav-item" onclick="showTab('coach', this)"><span style="font-size: 20px;">🤖</span><span>Koç</span></div>
+        <div class="nav-item" onclick="showTab('library', this)"><span style="font-size: 20px;">📚</span><span>Kütüphane</span></div>
     </nav>
     <div id="toast"></div>
 </div>
 
 <script>
-    // --- VERİTABANI & YAPILANDIRMA ---
+    // --- VERİTABANI ---
     const defaultBooks = [
         { id: 1, ad: "3D Yayınları", ders: "TYT Matematik" },
         { id: 2, ad: "Limit Kronometre", ders: "TYT Türkçe" },
@@ -200,54 +218,25 @@
     ];
 
     const examTemplates = {
-        'TYT': [
-            { id: 'tr', name: 'Türkçe', max: 40 },
-            { id: 'mat', name: 'Matematik', max: 40 },
-            { id: 'fiz', name: 'Fizik', max: 7 },
-            { id: 'kim', name: 'Kimya', max: 7 },
-            { id: 'biy', name: 'Biyoloji', max: 6 },
-            { id: 'tar', name: 'Tarih', max: 5 },
-            { id: 'cog', name: 'Coğrafya', max: 5 },
-            { id: 'fel', name: 'Felsefe', max: 5 },
-            { id: 'din', name: 'Din Kültürü', max: 5 }
-        ],
-        'AYT-SAY': [
-            { id: 'mat', name: 'Matematik', max: 40 },
-            { id: 'fiz', name: 'Fizik', max: 14 },
-            { id: 'kim', name: 'Kimya', max: 13 },
-            { id: 'biy', name: 'Biyoloji', max: 13 }
-        ],
-        'AYT-EA': [
-            { id: 'mat', name: 'Matematik', max: 40 },
-            { id: 'edb', name: 'Edebiyat', max: 24 },
-            { id: 'tar1', name: 'Tarih-1', max: 10 },
-            { id: 'cog1', name: 'Coğrafya-1', max: 6 }
-        ],
-        'AYT-SOZ': [
-            { id: 'edb', name: 'Edebiyat', max: 24 },
-            { id: 'tar1', name: 'Tarih-1', max: 10 },
-            { id: 'cog1', name: 'Coğrafya-1', max: 6 },
-            { id: 'tar2', name: 'Tarih-2', max: 11 },
-            { id: 'cog2', name: 'Coğrafya-2', max: 11 },
-            { id: 'fel', name: 'Felsefe Grubu', max: 12 },
-            { id: 'din', name: 'Din Kültürü', max: 6 }
-        ]
+        'TYT': [ { id: 'tr', name: 'Türkçe', max: 40 }, { id: 'mat', name: 'Matematik', max: 40 }, { id: 'fiz', name: 'Fizik', max: 7 }, { id: 'kim', name: 'Kimya', max: 7 }, { id: 'biy', name: 'Biyoloji', max: 6 }, { id: 'tar', name: 'Tarih', max: 5 }, { id: 'cog', name: 'Coğrafya', max: 5 }, { id: 'fel', name: 'Felsefe', max: 5 }, { id: 'din', name: 'Din Kültürü', max: 5 } ],
+        'AYT-SAY': [ { id: 'mat', name: 'Matematik', max: 40 }, { id: 'fiz', name: 'Fizik', max: 14 }, { id: 'kim', name: 'Kimya', max: 13 }, { id: 'biy', name: 'Biyoloji', max: 13 } ],
+        'AYT-EA': [ { id: 'mat', name: 'Matematik', max: 40 }, { id: 'edb', name: 'Edebiyat', max: 24 }, { id: 'tar1', name: 'Tarih-1', max: 10 }, { id: 'cog1', name: 'Coğrafya-1', max: 6 } ],
+        'AYT-SOZ': [ { id: 'edb', name: 'Edebiyat', max: 24 }, { id: 'tar1', name: 'Tarih-1', max: 10 }, { id: 'cog1', name: 'Coğrafya-1', max: 6 }, { id: 'tar2', name: 'Tarih-2', max: 11 }, { id: 'cog2', name: 'Coğrafya-2', max: 11 }, { id: 'fel', name: 'Felsefe Grubu', max: 12 }, { id: 'din', name: 'Din Kültürü', max: 6 } ]
     };
 
-    let db = { user: null, library: [...defaultBooks], plan: [], completed: [], exams: [] };
+    let db = { user: null, library: [...defaultBooks], plan: [], completed: [], exams: [], chatHistory: [] };
 
     window.onload = () => {
-        const saved = localStorage.getItem('akilli_rota_ai');
+        const saved = localStorage.getItem('akilli_rota_ai_v4');
         if (saved) {
             db = JSON.parse(saved);
-            if (!db.exams) db.exams = [];
+            if (!db.chatHistory) db.chatHistory = [];
             startApp();
         } else {
             showPage('setup');
         }
         updateCountdown();
         updateSubjectOptions();
-        
         document.getElementById('examDate').value = new Date().toISOString().split('T')[0];
         renderExamForm();
     };
@@ -258,6 +247,7 @@
         renderPlan();
         renderLibrary();
         renderExams();
+        renderChatHistory();
         showPage('home');
     }
 
@@ -269,7 +259,109 @@
         startApp();
     }
 
-    // --- DENEME VE ANALİZ MODÜLÜ ---
+    // ==========================================
+    // YAPAY ZEKA KOÇLUK & SOHBET MOTORU (Puter.js)
+    // ==========================================
+    async function callAI(promptText) {
+        const systemInstruction = `Sen "Akıllı Rota" uygulamasının resmi, profesyonel ve disiplinli YKS Eğitim Koçusun. Görevlerin: 1. Deneme analizi yapıp zayıf yönleri tespit etmek. 2. Öğrenciyi resmi ve profesyonel bir dille motive etmek. 3. Öğrencinin kütüphanesindeki kitaplardan nokta atışı ödevler vermek. 4. Ödev özelleştirme/değiştirme isteklerini değerlendirmek. İstek mantıksızsa kesin bir dille RET verip pedagojik nedenini açıkla. İstek mantıklıysa ONAY ver. İkisi arasıysa İYİLEŞTİRME yap. HTML formatında (<b>, <ul>, <br>) net, kısa ve ciddi yanıtlar ver. Asla aşırı samimi olma.`;
+        
+        // Puter.js'in modeli sistem komutunu tam anlaması için bağlamla birleştiriyoruz
+        const fullPrompt = `${systemInstruction}\n\nİşte mevcut durum ve öğrencinin talebi:\n${promptText}`;
+
+        try {
+            // Tamamen ücretsiz ve API keysiz Puter AI isteği
+            const response = await puter.ai.chat(fullPrompt);
+
+            // Gelen yanıtın yapısını güvenli bir şekilde ayrıştırıyoruz
+            if (typeof response === 'string') {
+                return response;
+            } else if (response && response.message && response.message.content) {
+                return response.message.content;
+            } else if (response && response.text) {
+                return response.text;
+            } else {
+                return "<b>Sistem Uyarısı:</b> Koç modülü şu anda boş veya farklı formatta yanıt veriyor.";
+            }
+
+        } catch (error) {
+            console.error("Puter AI Hatası:", error);
+            return "<b>Sistem Hatası:</b> Koç modülüyle bağlantı kurulamadı. İnternet bağlantınızı kontrol ediniz veya limit/erişim durumuna bakınız.";
+        }
+    }
+
+    async function sendUserMessage() {
+        const inputField = document.getElementById('chatInput');
+        const text = inputField.value.trim();
+        if(!text) return;
+
+        addChatBubble(text, 'user');
+        inputField.value = '';
+        db.chatHistory.push({ role: 'user', text: text });
+        save();
+
+        document.getElementById('typingIndicator').style.display = 'block';
+        scrollToBottom();
+
+        const context = `Öğrenci Adı: ${db.user.name}. Aktif Ödevleri: ${db.plan.map(p=>p.ad).join(', ')}. Öğrencinin Talebi: "${text}"`;
+        
+        const aiResponse = await callAI(context);
+        
+        document.getElementById('typingIndicator').style.display = 'none';
+        addChatBubble(aiResponse, 'ai');
+        db.chatHistory.push({ role: 'ai', text: aiResponse });
+        save();
+        scrollToBottom();
+    }
+
+    async function sendLatestExamToCoach() {
+        if(db.exams.length === 0) return showToast("Sistemde kayıtlı deneme bulunmuyor.");
+        
+        const latestExam = [...db.exams].sort((a,b) => b.id - a.id)[0];
+        const libraryStr = db.library.map(b => `${b.ders} - ${b.ad}`).join(', ');
+        const examStr = latestExam.subjects.map(s => `${s.name}: ${s.net} Net`).join(', ');
+
+        const promptText = `Sisteme yeni bir deneme girildi. Deneme Türü: ${latestExam.type}. Toplam Net: ${latestExam.totalNet}. Branş Analizi: ${examStr}. Öğrencinin Kütüphanesi: ${libraryStr}. Bu sonuçları analiz et, beni motive et ve kütüphanemdeki en uygun kitaptan bana eksik kapatma ödevi ver.`;
+
+        showTab('coach', document.querySelectorAll('.nav-item')[2]);
+        
+        addChatBubble(`Sistem Mesajı: "${latestExam.name}" analizi için koça gönderildi.`, 'user');
+        document.getElementById('typingIndicator').style.display = 'block';
+        scrollToBottom();
+
+        const aiResponse = await callAI(promptText);
+        
+        document.getElementById('typingIndicator').style.display = 'none';
+        addChatBubble(aiResponse, 'ai');
+        db.chatHistory.push({ role: 'ai', text: aiResponse });
+        save();
+        scrollToBottom();
+    }
+
+    function addChatBubble(text, role) {
+        const chatBox = document.getElementById('chatContainer');
+        const bubble = document.createElement('div');
+        bubble.className = `msg-bubble msg-${role}`;
+        if(role === 'ai') bubble.innerHTML = text;
+        else bubble.innerText = text;
+        chatBox.appendChild(bubble);
+    }
+
+    function renderChatHistory() {
+        const chatBox = document.getElementById('chatContainer');
+        chatBox.innerHTML = '<div class="msg-bubble msg-ai"><b>Sistem:</b> Merhaba, ben Akıllı Rota resmi koçunuz. Deneme verilerinizi analiz etmek ve size uygun stratejiyi belirlemek için buradayım. Planınızı değiştirmek veya itiraz etmek isterseniz buradan bana ulaşabilirsiniz.</div>';
+        db.chatHistory.forEach(msg => addChatBubble(msg.text, msg.role));
+        scrollToBottom();
+    }
+
+    function handleChatEnter(e) { if(e.key === 'Enter') sendUserMessage(); }
+    function scrollToBottom() {
+        const chatBox = document.getElementById('chatContainer');
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // ==========================================
+    // DENEME VE GÖREV FONKSİYONLARI
+    // ==========================================
     function renderExamForm() {
         const type = document.getElementById('examTypeSelect').value;
         const template = examTemplates[type];
@@ -305,28 +397,17 @@
             let d = parseInt(row.querySelector('.dogru-input').value) || 0;
             let y = parseInt(row.querySelector('.yanlis-input').value) || 0;
             
-            if (d + y > max) {
-                isValid = false;
-                return;
-            }
+            if (d + y > max) { isValid = false; return; }
 
             let b = max - (d + y);
             let net = d - (y / 4);
             totalNet += net;
-
             subjectsData.push({ name: subName, max: max, dogru: d, yanlis: y, bos: b, net: parseFloat(net.toFixed(2)) });
         });
 
         if (!isValid) return showToast("Hata: Doğru ve Yanlış toplamı soru sayısını geçemez!");
 
-        db.exams.push({ 
-            id: Date.now(), 
-            type: type, 
-            name: name, 
-            date: date, 
-            totalNet: parseFloat(totalNet.toFixed(2)),
-            subjects: subjectsData 
-        });
+        db.exams.push({ id: Date.now(), type: type, name: name, date: date, totalNet: parseFloat(totalNet.toFixed(2)), subjects: subjectsData });
         
         document.getElementById('examName').value = "";
         renderExamForm();
@@ -337,10 +418,7 @@
 
     function renderExams() {
         const list = document.getElementById('examResultsList');
-        if (db.exams.length === 0) {
-            list.innerHTML = `<p style="font-size:14px; color:var(--text-muted); text-align:center; padding: 20px 0;">Sistemde kayıtlı deneme bulunmamaktadır.</p>`;
-            return;
-        }
+        if (db.exams.length === 0) { list.innerHTML = `<p style="font-size:14px; color:var(--text-muted); text-align:center; padding: 20px 0;">Sistemde kayıtlı deneme bulunmamaktadır.</p>`; return; }
 
         const sortedExams = [...db.exams].sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -348,13 +426,9 @@
             const isTYT = exam.type === 'TYT';
             const badgeBg = isTYT ? 'var(--bg-main)' : 'var(--ayt-bg)';
             const badgeColor = isTYT ? 'var(--primary)' : 'var(--ayt-color)';
-            
             const dateObj = new Date(exam.date);
             const formattedDate = `${dateObj.getDate().toString().padStart(2, '0')}.${(dateObj.getMonth() + 1).toString().padStart(2, '0')}.${dateObj.getFullYear()}`;
-
-            const detailsHtml = (exam.subjects || []).map(sub => 
-                `<span class="exam-detail-badge">${sub.name}: ${sub.net}</span>`
-            ).join('');
+            const detailsHtml = (exam.subjects || []).map(sub => `<span class="exam-detail-badge">${sub.name}: ${sub.net}</span>`).join('');
 
             return `
                 <div class="card" style="border-left: 4px solid ${badgeColor};">
@@ -369,79 +443,25 @@
                             <div style="font-size:10px; font-weight:800; color:var(--text-muted); margin-top:2px;">TOPLAM NET</div>
                         </div>
                     </div>
-                    <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-color);">
-                        ${detailsHtml}
-                    </div>
+                    <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-color);">${detailsHtml}</div>
                     <button onclick="removeExam(${exam.id})" style="width: 100%; background: #fef2f2; color: var(--danger); border: none; border-radius: 8px; padding: 6px; font-weight: 700; font-size: 12px; margin-top: 10px; cursor:pointer;">Sonucu Sil</button>
                 </div>
             `;
         }).join('');
     }
 
-    function removeExam(id) {
-        if(confirm("Bu analiz raporunu silmek istediğinizden emin misiniz?")) {
-            db.exams = db.exams.filter(e => e.id !== id);
-            save();
-            renderExams();
-        }
-    }
+    function removeExam(id) { if(confirm("Bu analiz raporunu silmek istediğinizden emin misiniz?")) { db.exams = db.exams.filter(e => e.id !== id); save(); renderExams(); } }
 
-    // --- YAPAY ZEKA ÖDEVLENDİRME ---
-    function analyzeAndAssign() {
-        if (db.exams.length === 0) return showToast("Sistem Uyarısı: Analiz için en az 1 deneme gereklidir.");
-        
-        let latestExam = [...db.exams].sort((a,b) => b.id - a.id)[0];
-        if (!latestExam.subjects) return showToast("Eski format denemeler analiz edilemiyor.");
-
-        let worstSubject = null;
-        let lowestRatio = 100;
-
-        latestExam.subjects.forEach(sub => {
-            let ratio = sub.net / sub.max;
-            if (ratio < lowestRatio) {
-                lowestRatio = ratio;
-                worstSubject = sub.name;
-            }
-        });
-
-        // Kütüphaneden zayıf branşa ait uygun kitap bul
-        let targetBook = db.library.find(b => b.ders.includes(worstSubject));
-
-        if (targetBook) {
-            let alreadyAssigned = db.plan.some(p => p.id === targetBook.id && p.isAi);
-            if (!alreadyAssigned) {
-                db.plan.push({
-                    ...targetBook,
-                    instanceId: 'task_ai_' + Date.now(),
-                    target: `Eksik Kapatma (2 Test)`,
-                    isAi: true
-                });
-                save();
-                renderPlan();
-                showToast(`Analiz: ${worstSubject} netleriniz düşük. Yeni görev atandı.`);
-            } else {
-                showToast(`Analiz: ${worstSubject} için zaten göreviniz bulunuyor.`);
-            }
-        } else {
-            showToast(`Analiz: ${worstSubject} eksiğiniz var ancak kütüphanede uygun kaynak bulunamadı.`);
-        }
-    }
-
-    // --- KÜTÜPHANE & GÖREV FONKSİYONLARI ---
     function updateSubjectOptions() {
         const cat = document.getElementById('libCategory').value;
         const dersSelect = document.getElementById('libBookDers');
         dersSelect.innerHTML = '';
-        
         let list = [];
         if(cat === 'TYT') list = ["TYT Türkçe", "TYT Matematik", "TYT Geometri", "TYT Fizik", "TYT Kimya", "TYT Biyoloji", "TYT Tarih", "TYT Coğrafya", "TYT Felsefe", "TYT Din Kültürü"];
         else if(cat === 'AYT-SAY') list = ["AYT Matematik", "AYT Geometri", "AYT Fizik", "AYT Kimya", "AYT Biyoloji"];
         else if(cat === 'AYT-EA') list = ["AYT Matematik", "AYT Geometri", "Edebiyat", "Tarih-1", "Coğrafya-1"];
         else if(cat === 'AYT-SOZ') list = ["Edebiyat", "Tarih-1", "Coğrafya-1", "Tarih-2", "Coğrafya-2", "Felsefe Grubu", "Din Kültürü"];
-            
-        list.forEach(ders => {
-            dersSelect.insertAdjacentHTML('beforeend', `<option value="${ders}">${ders}</option>`);
-        });
+        list.forEach(ders => { dersSelect.insertAdjacentHTML('beforeend', `<option value="${ders}">${ders}</option>`); });
     }
 
     function addNewCustomBook() {
@@ -449,17 +469,12 @@
         const ders = document.getElementById('libBookDers').value;
         if (!name) return showToast("Kaynak adı gereklidir.");
         db.library.push({ id: Date.now(), ad: name, ders: ders });
-        document.getElementById('libBookName').value = "";
-        save(); renderLibrary(); showToast("Kaynak eklendi.");
+        document.getElementById('libBookName').value = ""; save(); renderLibrary(); showToast("Kaynak eklendi.");
     }
 
     function generateDailyPlan() {
         const selected = db.library.sort(() => 0.5 - Math.random()).slice(0, 3);
-        db.plan = selected.map(book => ({
-            ...book,
-            instanceId: 'task_' + Date.now() + Math.random().toString(36).substr(2, 5),
-            target: book.ders.includes("Türkçe") ? "40 Soru Çözümü" : "3 Test Çözümü"
-        }));
+        db.plan = selected.map(book => ({ ...book, instanceId: 'task_' + Date.now() + Math.random().toString(36).substr(2, 5), target: book.ders.includes("Türkçe") ? "40 Soru Çözümü" : "3 Test Çözümü" }));
         save();
     }
 
@@ -486,14 +501,12 @@
                     <div class="check-box ${isDone ? 'checked' : ''}" onclick="toggleTaskStatus('${task.instanceId}')"></div>
                 </div>
             `;
-
             if (isDone) { completedList.insertAdjacentHTML('beforeend', html); hasCompleted = true; } 
             else { activeList.insertAdjacentHTML('beforeend', html); }
         });
 
         completedSection.style.display = hasCompleted ? 'block' : 'none';
-        if (activeList.innerHTML === '') activeList.innerHTML = `<p style="font-size:13px; color:var(--text-muted); text-align:center; padding: 15px 0;">Görev kalmadı. Analiz ile yeni görev talep edebilirsiniz.</p>`;
-        
+        if (activeList.innerHTML === '') activeList.innerHTML = `<p style="font-size:13px; color:var(--text-muted); text-align:center; padding: 15px 0;">Görev kalmadı. Koçtan yeni görev talep edebilirsiniz.</p>`;
         updateStats();
     }
 
@@ -509,9 +522,7 @@
             const book = unused[Math.floor(Math.random() * unused.length)];
             db.plan.push({ ...book, instanceId: 'task_' + Date.now(), target: "Ekstra Görev: 2 Test" });
             save(); renderPlan(); showToast("Manuel görev atandı.");
-        } else {
-            showToast("Kütüphanedeki tüm kaynaklar aktif planda.");
-        }
+        } else { showToast("Kütüphanedeki tüm kaynaklar aktif planda."); }
     }
 
     function renderLibrary() {
@@ -527,15 +538,9 @@
         `).join('');
     }
 
-    function removeBook(id) {
-        if(confirm("Kaynağı silmek istediğinize emin misiniz?")) {
-            db.library = db.library.filter(b => b.id !== id);
-            save(); renderLibrary();
-        }
-    }
+    function removeBook(id) { if(confirm("Kaynağı silmek istediğinize emin misiniz?")) { db.library = db.library.filter(b => b.id !== id); save(); renderLibrary(); } }
 
-    // --- UTILS ---
-    function save() { localStorage.setItem('akilli_rota_ai', JSON.stringify(db)); }
+    function save() { localStorage.setItem('akilli_rota_ai_v4', JSON.stringify(db)); }
     function showPage(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-' + id).classList.add('active'); }
     function showTab(tab, el) { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); showPage(tab); }
     function updateCountdown() {
