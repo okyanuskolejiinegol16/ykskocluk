@@ -260,23 +260,34 @@
     }
 
     // ==========================================
-    // YAPAY ZEKA KOÇLUK & SOHBET MOTORU (Puter.js)
+    // YAPAY ZEKA KOÇLUK & SOHBET MOTORU (Puter.js Tam Korumalı)
     // ==========================================
     async function callAI(promptText) {
         const systemInstruction = `Sen "Akıllı Rota" uygulamasının resmi, profesyonel ve disiplinli YKS Eğitim Koçusun. Görevlerin: 1. Deneme analizi yapıp zayıf yönleri tespit etmek. 2. Öğrenciyi resmi ve profesyonel bir dille motive etmek. 3. Öğrencinin kütüphanesindeki kitaplardan nokta atışı ödevler vermek. 4. Ödev özelleştirme/değiştirme isteklerini değerlendirmek. İstek mantıksızsa kesin bir dille RET verip pedagojik nedenini açıkla. İstek mantıklıysa ONAY ver. İkisi arasıysa İYİLEŞTİRME yap. HTML formatında (<b>, <ul>, <br>) net, kısa ve ciddi yanıtlar ver. Asla aşırı samimi olma.`;
         
-        // Puter.js'in modeli sistem komutunu tam anlaması için bağlamla birleştiriyoruz
         const fullPrompt = `${systemInstruction}\n\nİşte mevcut durum ve öğrencinin talebi:\n${promptText}`;
 
         try {
-            // Tamamen ücretsiz ve API keysiz Puter AI isteği
             const response = await puter.ai.chat(fullPrompt);
 
-            // Gelen yanıtın yapısını güvenli bir şekilde ayrıştırıyoruz
+            // Gelen yanıtı tam korumalı şekilde string'e (metne) çeviriyoruz
             if (typeof response === 'string') {
                 return response;
             } else if (response && response.message && response.message.content) {
-                return response.message.content;
+                const content = response.message.content;
+                
+                // 1. Durum: Cevap bir dizi (array) olarak geldiyse (Örn: Claude/Gemini modelleri)
+                if (Array.isArray(content)) {
+                    return content.map(part => part.text || '').join('');
+                }
+                
+                // 2. Durum: Cevap bilinmeyen başka bir nesne (object) olarak geldiyse
+                if (typeof content === 'object') {
+                    return JSON.stringify(content);
+                }
+                
+                // 3. Durum: Standart düz metin (string)
+                return content;
             } else if (response && response.text) {
                 return response.text;
             } else {
@@ -285,7 +296,7 @@
 
         } catch (error) {
             console.error("Puter AI Hatası:", error);
-            return "<b>Sistem Hatası:</b> Koç modülüyle bağlantı kurulamadı. İnternet bağlantınızı kontrol ediniz veya limit/erişim durumuna bakınız.";
+            return "<b>Sistem Hatası:</b> Koç modülüyle bağlantı kurulamadı.";
         }
     }
 
