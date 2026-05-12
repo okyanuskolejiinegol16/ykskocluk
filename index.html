@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Akıllı Rota</title>
     <script src="https://js.puter.com/v2/"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         /* --- PREMIUM CSS & YKS OPTİMİZASYONU --- */
         :root {
@@ -21,6 +22,20 @@
             --ayt-bg: #fce7f3;
             --ai-color: #8b5cf6;
             --ai-bg: #ede9fe;
+            --nav-bg: rgba(255,255,255,0.95);
+            --input-bg: #f8fafc;
+        }
+
+        [data-theme="dark"] {
+            --bg-main: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --ayt-bg: #831843;
+            --ai-bg: #4c1d95;
+            --nav-bg: rgba(30,41,59,0.95);
+            --input-bg: #0f172a;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -38,8 +53,8 @@
 
         .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); padding: 16px; margin-bottom: 16px; }
 
-        .bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: 70px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); cursor: pointer; width: 25%; font-size: 11px; font-weight: 700; gap: 4px; transition: 0.2s; }
+        .bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: 70px; background: var(--nav-bg); backdrop-filter: blur(10px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); cursor: pointer; width: 20%; font-size: 10px; font-weight: 700; gap: 3px; transition: 0.2s; }
         .nav-item.active { color: var(--primary); }
 
         /* --- GÖREV KARTLARI --- */
@@ -50,7 +65,7 @@
         .task-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
         .task-target { font-size: 13px; font-weight: 600; color: #d97706; background: #fef3c7; padding: 4px 8px; border-radius: 6px; display: inline-block; }
 
-        .check-box { width: 28px; height: 28px; border: 2px solid var(--border-color); border-radius: 8px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; background: #fff; margin-left: 15px; }
+        .check-box { width: 28px; height: 28px; border: 2px solid var(--border-color); border-radius: 8px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; background: var(--card-bg); margin-left: 15px; }
         .check-box.checked { background: var(--success); border-color: var(--success); }
         .check-box.checked::after { content: '✔'; color: white; font-size: 14px; font-weight: bold; }
 
@@ -65,13 +80,13 @@
         .subject-label { font-size: 13px; font-weight: 700; color: var(--text-main); }
         .subject-max { font-size: 10px; color: var(--text-muted); font-weight: 600; }
         
-        .exam-detail-badge { font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #f1f5f9; color: var(--text-muted); margin-right: 4px; margin-top: 4px; display: inline-block; }
+        .exam-detail-badge { font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: var(--bg-main); color: var(--text-muted); margin-right: 4px; margin-top: 4px; display: inline-block; }
 
         /* --- SOHBET (CHAT) ARAYÜZÜ --- */
         .chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 10px; }
         .msg-bubble { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 14px; font-weight: 500; line-height: 1.5; }
         .msg-user { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
-        .msg-ai { align-self: flex-start; background: white; border: 1px solid var(--border-color); color: var(--text-main); border-bottom-left-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .msg-ai { align-self: flex-start; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); border-bottom-left-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
         .msg-ai b { color: var(--ai-color); font-weight: 800; }
         .typing-indicator { font-size: 12px; color: var(--text-muted); font-style: italic; display: none; align-self: flex-start; margin-left: 10px; }
 
@@ -80,18 +95,94 @@
         .btn-secondary { background: var(--border-color); color: var(--text-main); margin-top: 10px; }
         .btn-ai { background: linear-gradient(135deg, var(--primary), var(--ai-color)); color: white; margin-top: 10px; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); }
         
-        .custom-input, .custom-select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 12px; outline: none; font-weight: 600; font-size: 14px; background: #f8fafc; color: var(--text-main); }
-        .custom-input:focus, .custom-select:focus { border-color: var(--primary); background: #fff; }
+        .custom-input, .custom-select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 12px; outline: none; font-weight: 600; font-size: 14px; background: var(--input-bg); color: var(--text-main); }
+        .custom-input:focus, .custom-select:focus { border-color: var(--primary); background: var(--card-bg); }
 
         .header-title { font-size: 24px; font-weight: 800; color: var(--primary); margin-bottom: 20px; letter-spacing: -0.5px;}
         .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--text-main); }
 
         #toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 30px; font-size: 13px; font-weight: 600; display: none; z-index: 2000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-align: center; min-width: 250px;}
+
+        /* --- POMODORO --- */
+        .timer-wrap { display:flex; flex-direction:column; align-items:center; margin: 20px 0; }
+        .timer-svg { width:200px; height:200px; transform:rotate(-90deg); }
+        .timer-bg { fill:none; stroke:var(--border-color); stroke-width:8; }
+        .timer-progress { fill:none; stroke:var(--primary); stroke-width:8; stroke-linecap:round; stroke-dasharray:339.292; stroke-dashoffset:0; transition:stroke-dashoffset 0.5s linear; }
+        .timer-progress.break-mode { stroke:var(--success); }
+        .timer-display { font-size:42px; font-weight:800; margin-top:-130px; margin-bottom:95px; color:var(--text-main); letter-spacing:2px; }
+        .pomo-stats { display:flex; gap:12px; width:100%; margin-top:10px; }
+        .pomo-stat-card { flex:1; text-align:center; }
+
+        /* --- PROGRESS BAR --- */
+        .progress-bar-bg { width:100%; height:8px; background:var(--border-color); border-radius:4px; overflow:hidden; margin-top:6px; }
+        .progress-bar-fill { height:100%; background:linear-gradient(90deg,var(--primary),var(--secondary)); border-radius:4px; transition:width 0.4s ease; }
+
+        /* --- BADGES --- */
+        .badge-scroll { display:flex; gap:10px; overflow-x:auto; padding:8px 0; }
+        .badge-item { min-width:70px; text-align:center; padding:10px 6px; border-radius:12px; background:var(--card-bg); border:1px solid var(--border-color); }
+        .badge-item.locked { opacity:0.35; filter:grayscale(1); }
+        .badge-icon { font-size:28px; }
+        .badge-name { font-size:9px; font-weight:700; color:var(--text-muted); margin-top:4px; }
+
+        /* --- TOPICS --- */
+        .topic-item { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border-color); font-size:13px; font-weight:600; }
+        .topic-item:last-child { border-bottom:none; }
+        .topic-check { width:22px; height:22px; border:2px solid var(--border-color); border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; background:var(--card-bg); transition:0.2s; flex-shrink:0; }
+        .topic-check.done { background:var(--success); border-color:var(--success); }
+        .topic-check.done::after { content:'✔'; color:#fff; font-size:11px; font-weight:bold; }
+        .topic-subject-card { cursor:pointer; }
+        .topic-subject-card .collapse-content { display:none; }
+        .topic-subject-card.open .collapse-content { display:block; }
+
+        /* --- SETTINGS MENU CARD --- */
+        .menu-card { display:flex; align-items:center; gap:14px; cursor:pointer; padding:14px; }
+        .menu-card:active { transform:scale(0.98); }
+        .menu-icon { font-size:24px; width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-radius:12px; background:var(--bg-main); }
+
+        /* --- STREAK & MOTIVATION --- */
+        .motivation-card { border-left:4px solid var(--secondary); font-style:italic; font-size:13px; line-height:1.6; color:var(--text-muted); }
+        .motivation-card b { color:var(--secondary); font-style:normal; }
+
+        /* --- WEEKLY SUMMARY --- */
+        .weekly-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+        .weekly-item { text-align:center; padding:10px; background:var(--bg-main); border-radius:10px; }
+        .weekly-val { font-size:20px; font-weight:800; }
+        .weekly-label { font-size:10px; font-weight:700; color:var(--text-muted); margin-top:2px; }
+
+        /* --- HATA DEFTERİ --- */
+        .mistake-card { border-left:4px solid var(--danger); }
+        .mistake-subject { font-size:10px; font-weight:800; color:var(--danger); background:#fef2f2; padding:3px 8px; border-radius:4px; display:inline-block; margin-bottom:4px; }
+
+        /* --- FLASHCARD --- */
+        .flashcard { min-height:160px; display:flex; align-items:center; justify-content:center; text-align:center; cursor:pointer; transition:transform 0.4s; transform-style:preserve-3d; position:relative; }
+        .flashcard.flipped { transform:rotateY(180deg); }
+        .fc-face { position:absolute; width:100%; backface-visibility:hidden; padding:20px; }
+        .fc-front { font-size:15px; font-weight:700; }
+        .fc-back { transform:rotateY(180deg); font-size:14px; color:var(--text-muted); font-weight:600; }
+        .fc-nav { display:flex; gap:8px; justify-content:center; margin-top:10px; }
+
+        /* --- MOOD TRACKER --- */
+        .mood-row { display:flex; gap:8px; justify-content:center; }
+        .mood-btn { font-size:28px; cursor:pointer; padding:6px; border-radius:10px; border:2px solid transparent; transition:0.2s; background:none; }
+        .mood-btn.selected { border-color:var(--primary); background:var(--bg-main); transform:scale(1.15); }
+
+        /* --- QUESTION COUNTER --- */
+        .q-counter { display:flex; align-items:center; justify-content:center; gap:16px; }
+        .q-btn { width:40px; height:40px; border-radius:50%; border:none; font-size:20px; font-weight:800; cursor:pointer; background:var(--primary); color:#fff; transition:0.2s; }
+        .q-btn:active { transform:scale(0.9); }
+        .q-count { font-size:32px; font-weight:900; color:var(--text-main); min-width:50px; text-align:center; }
+
+        /* --- CALENDAR --- */
+        .cal-event { padding:10px; border-left:3px solid var(--secondary); margin-bottom:8px; background:var(--card-bg); border-radius:0 10px 10px 0; }
+        .cal-date { font-size:11px; font-weight:700; color:var(--secondary); }
+        .cal-name { font-size:14px; font-weight:700; margin-top:2px; }
+        .cal-days { font-size:11px; color:var(--text-muted); font-weight:600; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
+    <div id="themeToggle" onclick="toggleTheme()" style="position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 24px; z-index: 1000; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">🌙</div>
     
     <div id="page-setup" class="page">
         <h1 class="header-title" style="margin-top: 50px;">Akıllı Rota</h1>
@@ -99,36 +190,99 @@
         
         <label style="font-size: 12px; font-weight: 700; color: var(--text-muted);">ÖĞRENCİ ADI</label>
         <input type="text" id="setupName" class="custom-input" placeholder="Ad Soyad" autocomplete="off">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted);">HEDEF ÜNİVERSİTE (Opsiyonel)</label>
+        <input type="text" id="setupUni" class="custom-input" placeholder="Örn: İTÜ, Boğaziçi" autocomplete="off">
+        <label style="font-size: 12px; font-weight: 700; color: var(--text-muted);">HEDEF BÖLÜM (Opsiyonel)</label>
+        <input type="text" id="setupDept" class="custom-input" placeholder="Örn: Bilgisayar Mühendisliği" autocomplete="off">
         
         <button class="btn btn-primary" style="margin-top: 20px;" onclick="completeSetup()">Sistemi Başlat</button>
     </div>
 
     <div id="page-home" class="page">
         <h1 class="header-title">Akıllı Rota</h1>
-        
-        <div style="display: flex; gap: 12px; margin-bottom: 24px;">
-            <div class="card" style="flex: 1; margin: 0; text-align: center;">
-                <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">YKS'YE KALAN</div>
-                <div id="daysLeft" style="font-size: 22px; font-weight: 800; color: var(--primary);">--</div>
+
+        <!-- Motivasyon Sözü (kompakt) -->
+        <div class="card motivation-card" id="motivationCard" style="padding:12px 16px;margin-bottom:12px;"><b>💡</b> <span id="motivationText"></span></div>
+
+        <!-- İstatistik Satırı -->
+        <div style="display:flex; gap:8px; margin-bottom:12px;">
+            <div class="card" style="flex:1; margin:0; text-align:center; padding:12px 8px;">
+                <div style="font-size:10px; font-weight:700; color:var(--text-muted);">📅 YKS</div>
+                <div id="daysLeft" style="font-size:20px; font-weight:800; color:var(--primary);">--</div>
+                <div style="font-size:9px; color:var(--text-muted); font-weight:600;">gün</div>
             </div>
-            <div class="card" style="flex: 1; margin: 0; text-align: center;">
-                <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">GÜNLÜK VERİM</div>
-                <div id="statsText" style="font-size: 22px; font-weight: 800; color: var(--success);">0/0</div>
+            <div class="card" style="flex:1; margin:0; text-align:center; padding:12px 8px;">
+                <div style="font-size:10px; font-weight:700; color:var(--text-muted);">✅ VERİM</div>
+                <div id="statsText" style="font-size:20px; font-weight:800; color:var(--success);">0/0</div>
+                <div style="font-size:9px; color:var(--text-muted); font-weight:600;">görev</div>
+            </div>
+            <div class="card" style="flex:1; margin:0; text-align:center; padding:12px 8px;">
+                <div style="font-size:10px; font-weight:700; color:var(--text-muted);">⏱ Çalışma</div>
+                <div id="homeStudyTime" style="font-size:20px; font-weight:800; color:var(--ai-color);">0dk</div>
+                <div style="font-size:9px; color:var(--text-muted); font-weight:600;">bugün</div>
+            </div>
+            <div class="card" style="flex:1; margin:0; text-align:center; padding:12px 8px;">
+                <div style="font-size:10px; font-weight:700; color:var(--text-muted);">🔥 Seri</div>
+                <div id="streakCount" style="font-size:20px; font-weight:800; color:#f97316;">0</div>
+                <div style="font-size:9px; color:var(--text-muted); font-weight:600;">gün</div>
             </div>
         </div>
 
-        <h2 class="section-title">Güncel Görevler</h2>
+        <!-- Ruh Hali (kompakt, tek satır) -->
+        <div style="display:flex; align-items:center; gap:6px; margin-bottom:16px; justify-content:center;">
+            <span style="font-size:11px; font-weight:700; color:var(--text-muted);">Nasılsın?</span>
+            <button class="mood-btn" onclick="setMood(5)" style="font-size:22px;padding:4px;">😄</button>
+            <button class="mood-btn" onclick="setMood(4)" style="font-size:22px;padding:4px;">🙂</button>
+            <button class="mood-btn" onclick="setMood(3)" style="font-size:22px;padding:4px;">😐</button>
+            <button class="mood-btn" onclick="setMood(2)" style="font-size:22px;padding:4px;">😟</button>
+            <button class="mood-btn" onclick="setMood(1)" style="font-size:22px;padding:4px;">😩</button>
+        </div>
+
+        <!-- ========== GÖREVLER (ANA ODAK) ========== -->
+        <h2 class="section-title">📋 Güncel Görevler</h2>
         <div id="activeTasksList"></div>
-        <button class="btn btn-secondary" onclick="addExtraTask()">+ Manuel Görev Ata</button>
+        <div style="display:flex;gap:8px;">
+            <select id="taskDiffSelect" class="custom-select" style="margin-bottom:0;flex:1;">
+                <option value="Karışık">Karışık</option>
+                <option value="Kolay">Kolay</option>
+                <option value="Orta">Orta</option>
+                <option value="Zor">Zor</option>
+            </select>
+            <button class="btn btn-secondary" style="margin-top:0;flex:2;" onclick="addExtraTask()">+ Manuel Görev Ata</button>
+        </div>
 
         <div class="completed-section" id="completedContainer" style="display: none;">
             <h2 class="section-title" style="color: var(--success);">Tamamlananlar</h2>
             <div id="completedTasksList"></div>
         </div>
+
+        <!-- Soru Sayacı (kompakt) -->
+        <div class="card" style="margin-top:20px; padding:12px;">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <span style="font-size:12px;font-weight:700;color:var(--text-muted);">🔢 Bugün çözülen soru</span>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <button class="q-btn" style="width:28px;height:28px;font-size:14px;background:var(--danger);" onclick="changeQCount(-1)">-</button>
+                    <div class="q-count" id="qCountDisplay" style="font-size:22px;min-width:35px;">0</div>
+                    <button class="q-btn" style="width:28px;height:28px;font-size:14px;background:var(--success);" onclick="changeQCount(1)">+</button>
+                    <button class="q-btn" style="width:28px;height:28px;font-size:12px;background:var(--success);" onclick="changeQCount(10)">+10</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="page-exams" class="page">
         <h1 class="header-title">Deneme Raporları</h1>
+
+        <!-- Haftalık Özet (Analiz sayfasında daha mantıklı) -->
+        <div class="card" style="margin-bottom:16px;">
+            <div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:8px;">HAFTALIK ÖZET</div>
+            <div class="weekly-grid">
+                <div class="weekly-item"><div class="weekly-val" id="exaWeekTasks" style="color:var(--primary);">0</div><div class="weekly-label">GÖREV</div></div>
+                <div class="weekly-item"><div class="weekly-val" id="exaWeekStudy" style="color:var(--success);">0dk</div><div class="weekly-label">ÇALIŞMA</div></div>
+                <div class="weekly-item"><div class="weekly-val" id="exaWeekExams" style="color:var(--ai-color);">0</div><div class="weekly-label">DENEME</div></div>
+                <div class="weekly-item"><div class="weekly-val" id="exaWeekPomo" style="color:var(--danger);">0</div><div class="weekly-label">POMODORO</div></div>
+            </div>
+        </div>
         
         <button class="btn btn-ai" style="margin-bottom: 16px;" onclick="sendLatestExamToCoach()">✨ Son Denemeyi Koç ile Analiz Et</button>
 
@@ -157,6 +311,9 @@
             
             <button class="btn btn-primary" onclick="saveExamResult()">Verileri Kaydet</button>
         </div>
+
+        <h2 class="section-title" style="margin-top: 24px;">Net Gelişim Grafiği</h2>
+        <div class="card" id="chartCard" style="display:none;"><canvas id="netChart" height="200"></canvas></div>
 
         <h2 class="section-title" style="margin-top: 24px;">Kayıtlı Analizler</h2>
         <div id="examResultsList"></div>
@@ -192,7 +349,15 @@
                 </select>
                 <select id="libBookDers" class="custom-select"></select>
             </div>
-            <input type="text" id="libBookName" class="custom-input" placeholder="Kaynak Adı (Örn: Orijinal Fasikül)">
+            <div style="display:flex;gap:10px;margin-bottom:8px;">
+                <input type="text" id="libBookName" class="custom-input" style="margin-bottom:0;flex:2;" placeholder="Kaynak Adı Seç veya Yaz" list="bookSuggestions" oninput="autoSetDifficulty()">
+                <datalist id="bookSuggestions"></datalist>
+                <select id="libBookDifficulty" class="custom-select" style="margin-bottom:0;flex:1;">
+                    <option value="Kolay">Kolay</option>
+                    <option value="Orta" selected>Orta</option>
+                    <option value="Zor">Zor</option>
+                </select>
+            </div>
             <button class="btn btn-primary" onclick="addNewCustomBook()">Sisteme Ekle</button>
         </div>
 
@@ -200,11 +365,126 @@
         <div id="fullLibraryList"></div>
     </div>
 
+    <!-- POMODORO PAGE -->
+    <div id="page-pomodoro" class="page">
+        <h1 class="header-title">Odaklan ⏱️</h1>
+        <div class="card">
+            <div class="timer-wrap">
+                <svg class="timer-svg" viewBox="0 0 120 120"><circle class="timer-bg" cx="60" cy="60" r="54"/><circle class="timer-progress" cx="60" cy="60" r="54" id="timerProgress"/></svg>
+                <div class="timer-display" id="timerDisplay">25:00</div>
+            </div>
+            <div id="timerModeLabel" style="text-align:center;font-size:13px;font-weight:700;color:var(--text-muted);margin-bottom:14px;">ÇALIŞMA MODU</div>
+            <div style="display:flex;gap:8px;">
+                <button class="btn btn-primary" id="pomoBtnStart" onclick="togglePomodoro()">Başlat</button>
+                <button class="btn btn-secondary" style="margin-top:0;" onclick="resetPomodoro()">Sıfırla</button>
+            </div>
+        </div>
+        <div class="pomo-stats">
+            <div class="card pomo-stat-card" style="margin:0;"><div style="font-size:10px;font-weight:700;color:var(--text-muted);">SEANS</div><div id="pomoSessions" style="font-size:22px;font-weight:800;color:var(--primary);">0</div></div>
+            <div class="card pomo-stat-card" style="margin:0;"><div style="font-size:10px;font-weight:700;color:var(--text-muted);">BUGÜN</div><div id="pomoToday" style="font-size:22px;font-weight:800;color:var(--success);">0dk</div></div>
+            <div class="card pomo-stat-card" style="margin:0;"><div style="font-size:10px;font-weight:700;color:var(--text-muted);">TOPLAM</div><div id="pomoTotal" style="font-size:22px;font-weight:800;color:var(--ai-color);">0sa</div></div>
+        </div>
+    </div>
+
+    <!-- TOPICS PAGE -->
+    <div id="page-topics" class="page">
+        <h1 class="header-title">Konu Takibi 📚</h1>
+        <div style="margin-bottom:12px;">
+            <select id="topicCategorySelect" class="custom-select" style="margin-bottom:0;" onchange="renderTopics()"><option value="TYT">TYT</option><option value="AYT">AYT</option></select>
+        </div>
+        <div id="topicsContainer"></div>
+    </div>
+
+    <!-- SETTINGS PAGE -->
+    <div id="page-settings" class="page">
+        <h1 class="header-title">Menü ⚙️</h1>
+        <div class="card">
+            <div style="text-align:center;margin-bottom:10px;"><div style="font-size:40px;">👤</div><div id="settingsUserName" style="font-size:18px;font-weight:800;margin-top:4px;"></div><div id="settingsTarget" style="font-size:12px;color:var(--text-muted);font-weight:600;margin-top:2px;"></div></div>
+            <h2 class="section-title" style="font-size:12px;margin-top:8px;">ROZETLERİN</h2>
+            <div class="badge-scroll" id="badgeContainer"></div>
+        </div>
+        <div class="card menu-card" onclick="showPage('library')"><div class="menu-icon">📚</div><div><div style="font-weight:700;font-size:14px;">Kütüphane</div><div style="font-size:11px;color:var(--text-muted);">Kaynak ekle ve yönet</div></div></div>
+        <div class="card menu-card" onclick="showPage('topics')"><div class="menu-icon">📋</div><div><div style="font-weight:700;font-size:14px;">Konu Takibi</div><div style="font-size:11px;color:var(--text-muted);">Müfredat ilerlemeni gör</div></div></div>
+        <div class="card menu-card" onclick="showPage('mistakes')"><div class="menu-icon">✍️</div><div><div style="font-weight:700;font-size:14px;">Hata Defteri</div><div style="font-size:11px;color:var(--text-muted);">Yanlışlarını kaydet ve tekrar et</div></div></div>
+        <div class="card menu-card" onclick="showPage('flashcards')"><div class="menu-icon">🃏</div><div><div style="font-weight:700;font-size:14px;">Bilgi Kartları</div><div style="font-size:11px;color:var(--text-muted);">Formül ve kural kartları</div></div></div>
+        <div class="card menu-card" onclick="showPage('calendar')"><div class="menu-icon">📅</div><div><div style="font-weight:700;font-size:14px;">Sınav Takvimi</div><div style="font-size:11px;color:var(--text-muted);">Yaklaşan deneme ve sınavlar</div></div></div>
+        <div class="card">
+            <h2 class="section-title" style="font-size:14px;">Profil Düzenle</h2>
+            <label style="font-size:11px;font-weight:700;color:var(--text-muted);">AD SOYAD</label>
+            <input type="text" id="settingsName" class="custom-input" placeholder="Ad Soyad">
+            <label style="font-size:11px;font-weight:700;color:var(--text-muted);">HEDEF ÜNİVERSİTE</label>
+            <input type="text" id="settingsUni" class="custom-input" placeholder="Örn: Boğaziçi Üniversitesi">
+            <label style="font-size:11px;font-weight:700;color:var(--text-muted);">HEDEF BÖLÜM</label>
+            <input type="text" id="settingsDept" class="custom-input" placeholder="Örn: Bilgisayar Mühendisliği">
+            <label style="font-size:11px;font-weight:700;color:var(--text-muted);">KOÇ KİŞİLİĞİ</label>
+            <select id="settingsPersonality" class="custom-select"><option value="strict">Sert ve Disiplinli</option><option value="motivator">Motive Edici</option><option value="balanced">Dengeli</option></select>
+            <button class="btn btn-primary" onclick="saveSettings()">Kaydet</button>
+        </div>
+        <div class="card">
+            <h2 class="section-title" style="font-size:14px;">Veri Yönetimi</h2>
+            <button class="btn btn-secondary" style="margin-top:0;" onclick="exportData()">📥 Verileri Dışa Aktar (JSON)</button>
+            <button class="btn btn-secondary" style="background:#fef2f2;color:var(--danger);" onclick="resetAllData()">🗑️ Tüm Verileri Sıfırla</button>
+        </div>
+    </div>
+
+    <!-- HATA DEFTERİ PAGE -->
+    <div id="page-mistakes" class="page">
+        <h1 class="header-title">Hata Defteri ✍️</h1>
+        <div class="card">
+            <h2 class="section-title" style="font-size:14px;">Yeni Hata Kaydı</h2>
+            <div style="display:flex;gap:10px;margin-bottom:8px;">
+                <select id="mistakeSubject" class="custom-select" style="margin-bottom:0;" onchange="updateMistakeTopicOptions()"><option value="Matematik">Matematik</option><option value="Türkçe">Türkçe</option><option value="Fizik">Fizik</option><option value="Kimya">Kimya</option><option value="Biyoloji">Biyoloji</option><option value="Tarih">Tarih</option><option value="Coğrafya">Coğrafya</option><option value="Edebiyat">Edebiyat</option><option value="Felsefe">Felsefe</option></select>
+                <select id="mistakeTopic" class="custom-select" style="margin-bottom:0;"></select>
+            </div>
+            <input type="text" id="mistakeQuestion" class="custom-input" placeholder="Soru detayı / Sayfa no">
+            <textarea id="mistakeNote" class="custom-input" style="min-height:70px;resize:vertical;" placeholder="Neden yanlış yaptın? Not ekle..."></textarea>
+            <button class="btn btn-primary" onclick="addMistake()">Kaydet</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;" id="mistakeFilterContainer"></div>
+        <div id="mistakesList"></div>
+    </div>
+
+    <!-- FLASHCARDS PAGE -->
+    <div id="page-flashcards" class="page">
+        <h1 class="header-title">Bilgi Kartları 🃏</h1>
+        <div class="card">
+            <h2 class="section-title" style="font-size:14px;">Yeni Kart Ekle</h2>
+            <select id="fcSubject" class="custom-select"><option value="Matematik">Matematik</option><option value="Fizik">Fizik</option><option value="Kimya">Kimya</option><option value="Biyoloji">Biyoloji</option><option value="Türkçe">Türkçe</option><option value="Tarih">Tarih</option></select>
+            <input type="text" id="fcFront" class="custom-input" placeholder="Ön yüz (Soru / Formül adı)">
+            <textarea id="fcBack" class="custom-input" style="min-height:60px;resize:vertical;" placeholder="Arka yüz (Cevap / Formül)"></textarea>
+            <button class="btn btn-primary" onclick="addFlashcard()">Kartı Ekle</button>
+        </div>
+        <div id="fcReviewArea" style="display:none;margin-top:16px;">
+            <h2 class="section-title">Tekrar Modu</h2>
+            <div class="card flashcard" id="fcCard" onclick="document.getElementById('fcCard').classList.toggle('flipped')">
+                <div class="fc-face fc-front" id="fcFrontDisplay"></div>
+                <div class="fc-face fc-back" id="fcBackDisplay"></div>
+            </div>
+            <div class="fc-nav"><button class="btn btn-secondary" style="margin:0;width:auto;padding:10px 20px;" onclick="prevFlashcard()">◀ Önceki</button><span id="fcIndex" style="font-size:13px;font-weight:700;color:var(--text-muted);padding:10px;"></span><button class="btn btn-primary" style="width:auto;padding:10px 20px;" onclick="nextFlashcard()">Sonraki ▶</button></div>
+        </div>
+        <h2 class="section-title" style="margin-top:20px;">Kayıtlı Kartlar (<span id="fcTotal">0</span>)</h2>
+        <div id="fcList"></div>
+    </div>
+
+    <!-- SINAV TAKVİMİ PAGE -->
+    <div id="page-calendar" class="page">
+        <h1 class="header-title">Sınav Takvimi 📅</h1>
+        <div class="card">
+            <h2 class="section-title" style="font-size:14px;">Yeni Etkinlik Ekle</h2>
+            <input type="text" id="calName" class="custom-input" placeholder="Deneme / Sınav Adı">
+            <input type="date" id="calDate" class="custom-input">
+            <button class="btn btn-primary" onclick="addCalEvent()">Takvime Ekle</button>
+        </div>
+        <h2 class="section-title" style="margin-top:20px;">Yaklaşan Etkinlikler</h2>
+        <div id="calEventsList"></div>
+    </div>
+
     <nav class="bottom-nav" id="mainNav" style="display: none;">
         <div class="nav-item active" onclick="showTab('home', this)"><span style="font-size: 20px;">📋</span><span>Plan</span></div>
         <div class="nav-item" onclick="showTab('exams', this)"><span style="font-size: 20px;">📈</span><span>Analiz</span></div>
+        <div class="nav-item" onclick="showTab('pomodoro', this)"><span style="font-size: 20px;">⏱️</span><span>Odaklan</span></div>
         <div class="nav-item" onclick="showTab('coach', this)"><span style="font-size: 20px;">🤖</span><span>Koç</span></div>
-        <div class="nav-item" onclick="showTab('library', this)"><span style="font-size: 20px;">📚</span><span>Kütüphane</span></div>
+        <div class="nav-item" onclick="showTab('settings', this)"><span style="font-size: 20px;">⚙️</span><span>Menü</span></div>
     </nav>
     <div id="toast"></div>
 </div>
@@ -212,9 +492,9 @@
 <script>
     // --- VERİTABANI ---
     const defaultBooks = [
-        { id: 1, ad: "3D Yayınları", ders: "TYT Matematik" },
-        { id: 2, ad: "Limit Kronometre", ders: "TYT Türkçe" },
-        { id: 3, ad: "Apotemi Fasikül", ders: "AYT Matematik" }
+        { id: 1, ad: "3D Yayınları", ders: "TYT Matematik", difficulty: "Zor" },
+        { id: 2, ad: "Limit Kronometre", ders: "TYT Türkçe", difficulty: "Orta" },
+        { id: 3, ad: "Apotemi Fasikül", ders: "AYT Matematik", difficulty: "Zor" }
     ];
 
     const examTemplates = {
@@ -224,13 +504,149 @@
         'AYT-SOZ': [ { id: 'edb', name: 'Edebiyat', max: 24 }, { id: 'tar1', name: 'Tarih-1', max: 10 }, { id: 'cog1', name: 'Coğrafya-1', max: 6 }, { id: 'tar2', name: 'Tarih-2', max: 11 }, { id: 'cog2', name: 'Coğrafya-2', max: 11 }, { id: 'fel', name: 'Felsefe Grubu', max: 12 }, { id: 'din', name: 'Din Kültürü', max: 6 } ]
     };
 
-    let db = { user: null, library: [...defaultBooks], plan: [], completed: [], exams: [], chatHistory: [] };
+    let db = { user: null, library: [...defaultBooks], plan: [], completed: [], exams: [], chatHistory: [], pomodoro: { sessions: 0, totalMinutes: 0, dailyLog: {} }, topics: {}, badges: [], mistakes: [], activityLog: [], flashcards: [], moodLog: {}, questionLog: {}, calEvents: [] };
+
+    // --- MOTİVASYON SÖZLERİ ---
+    const motivationQuotes = [
+        'Başarı, hazırlık ile fırsatın buluştuğu yerdir.',
+        'Bugün çalıştığın konular, yarın sınavda karşına çıkacak.',
+        'Disiplin, motivasyon bittiğinde devreye giren güçtür.',
+        'Her doğru cevabın arkasında saatlerce emek var.',
+        'Küçük adımlar, büyük sonuçlar doğurur.',
+        'Yorulduğunda dur, ama asla vazgeçme.',
+        'Hedefin net, planın hazır. Şimdi sadece uygula.',
+        'Bugünü verimli geçirmek, geleceğine yatırımdır.',
+        'Sınav sadece bir gün, ama hazırlık her gün.',
+        'Dene, yanlış yap, öğren. Her hata seni güçlendirir.',
+        'Rakiplerin çalışırken sen dinlenirsen, onlar seni geçer.',
+        'Hayallerin büyükse, çaban da büyük olmalı.',
+        'Bu yıl senin yılın. Buna inan ve çalış.',
+        'Net artırmak için önce yanlışlarını analiz et.',
+    ];
+
+    // --- KONU VERİLERİ ---
+    const topicData = {
+        'TYT': {
+            'Matematik': ['Temel Kavramlar','Sayı Basamakları','Bölme-Bölünebilme','EBOB-EKOK','Rasyonel Sayılar','Üslü Sayılar','Köklü Sayılar','Oran-Orantı','Denklem Çözme','Problemler','Kümeler','Fonksiyonlar','Olasılık','İstatistik'],
+            'Türkçe': ['Sözcükte Anlam','Cümlede Anlam','Paragraf','Ses Bilgisi','Yapı Bilgisi','Sözcük Türleri','Cümle Bilgisi','Anlatım Bozuklukları','Yazım Kuralları','Noktalama İşaretleri'],
+            'Fizik': ['Madde ve Özellikleri','Hareket ve Kuvvet','Enerji','Isı ve Sıcaklık','Optik','Elektrik','Dalgalar'],
+            'Kimya': ['Atom','Periyodik Sistem','Kimyasal Türler','Mol Kavramı','Kimyasal Tepkimeler','Asitler ve Bazlar'],
+            'Biyoloji': ['Hücre','Canlılar Dünyası','Ekosistem','Kalıtım Temelleri','Çevre Sorunları'],
+            'Tarih': ['İlk Uygarlıklar','İslamiyet Öncesi Türk Tarihi','İslamiyet Sonrası','Osmanlı Kuruluş','Osmanlı Yükseliş'],
+            'Coğrafya': ['Doğa ve İnsan','Dünya Coğrafyası','Harita Bilgisi','İklim ve Bitki Örtüsü','Nüfus ve Yerleşme'],
+        },
+        'AYT': {
+            'Matematik': ['Polinomlar','İkinci Dereceden Denklemler','Karmaşık Sayılar','Logaritma','Diziler','Limit','Türev','İntegral','Trigonometri','Analitik Geometri'],
+            'Fizik': ['Kuvvet ve Hareket','Elektrik ve Manyetizma','Dalga Mekaniği','Modern Fizik','Atom Fiziği'],
+            'Kimya': ['Kimyasal Denge','Çözeltiler','Elektrokimya','Organik Kimya','Karbon Kimyası'],
+            'Biyoloji': ['Sinir Sistemi','Endokrin Sistem','Duyu Organları','Destek ve Hareket','Komünite Ekolojisi'],
+            'Edebiyat': ['Şiir Bilgisi','Roman','Hikaye','Edebi Akımlar','Divan Edebiyatı','Halk Edebiyatı','Cumhuriyet Dönemi']
+        }
+    };
+
+    // --- YOUTUBE KANAL ÖNERİLERİ ---
+    const ytChannels = {
+        'Matematik': ['Mert Hoca', 'Rehber Matematik', 'Eyüp B.', 'İlyas Güneş', 'Tunç Kurt'],
+        'Fizik': ['VIP Fizik', 'Fizikle Barış', 'Altuğ Güneş', 'Ertan Sinan Şahin'],
+        'Kimya': ['Görkem Şahin', 'Benim Hocam', 'Kimya Adası'],
+        'Biyoloji': ['Dr. Biyoloji', 'Selin Hoca', 'Fundamenta'],
+        'Türkçe': ['Rüştü Hoca', 'Kadir Gümüş', 'Aker Kartal'],
+        'Tarih': ['Ramazan Yetgin', 'Benim Hocam'],
+        'Coğrafya': ['Yavuz Tuna', 'Bayram Meral', 'Coğrafyanın Kodları'],
+        'Edebiyat': ['Kadir Gümüş', 'Rüştü Hoca'],
+        'Felsefe': ['Benim Hocam']
+    };
+
+    // --- EN ÜNLÜ KİTAPLAR ---
+    const famousBooks = {
+        'TYT Türkçe': [
+            {n:'Hız ve Renk Paragraf', d:'Kolay'}, {n:'Benim Hocam Türkçe', d:'Kolay'}, {n:'Bilgi Sarmal Türkçe', d:'Orta'}, {n:'345 Türkçe', d:'Orta'}, {n:'Çap Türkçe', d:'Orta'}, {n:'Yayın Denizi Türkçe', d:'Orta'}, {n:'Arı Paragrafın Ritmi', d:'Orta'}, {n:'Limit Kronometre', d:'Zor'}, {n:'Paraf Türkçe', d:'Zor'}, {n:'Apotemi Türkçe', d:'Zor'}
+        ],
+        'TYT Matematik': [
+            {n:'Aktif Matematik', d:'Kolay'}, {n:'Toprak Matematik', d:'Kolay'}, {n:'Bilgi Sarmal Matematik', d:'Orta'}, {n:'345 Matematik', d:'Orta'}, {n:'Karekök Matematik', d:'Orta'}, {n:'Metin Yayınları', d:'Orta'}, {n:'3D Yayınları', d:'Zor'}, {n:'Orijinal Matematik', d:'Zor'}, {n:'Acil Matematik', d:'Zor'}, {n:'Apotemi Problemler', d:'Zor'}
+        ],
+        'AYT Matematik': [
+            {n:'Aktif AYT Matematik', d:'Kolay'}, {n:'Toprak AYT Matematik', d:'Kolay'}, {n:'Bilgi Sarmal AYT Mat', d:'Orta'}, {n:'345 AYT Matematik', d:'Orta'}, {n:'Karekök AYT Matematik', d:'Orta'}, {n:'Endemik AYT', d:'Orta'}, {n:'3D AYT Matematik', d:'Zor'}, {n:'Orijinal AYT Matematik', d:'Zor'}, {n:'Acil AYT Matematik', d:'Zor'}, {n:'Apotemi Fasikülleri', d:'Zor'}
+        ],
+        'TYT Geometri': [
+            {n:'Geometrinin İlacı', d:'Kolay'}, {n:'Birey A Geometri', d:'Kolay'}, {n:'Bilgi Sarmal Geometri', d:'Orta'}, {n:'345 Geometri', d:'Orta'}, {n:'Karekök Geometri', d:'Orta'}, {n:'Acil Geometrinin İlacı', d:'Orta'}, {n:'3D Geometri', d:'Zor'}, {n:'Orijinal Geometri', d:'Zor'}, {n:'Apotemi Geometri', d:'Zor'}, {n:'Acil Geometri', d:'Zor'}
+        ],
+        'AYT Geometri': [
+            {n:'Geometrinin İlacı', d:'Kolay'}, {n:'Birey A Geometri', d:'Kolay'}, {n:'Bilgi Sarmal Geometri', d:'Orta'}, {n:'345 Geometri', d:'Orta'}, {n:'Karekök Geometri', d:'Orta'}, {n:'Acil Geometrinin İlacı', d:'Orta'}, {n:'3D Geometri', d:'Zor'}, {n:'Orijinal Geometri', d:'Zor'}, {n:'Apotemi Geometri', d:'Zor'}, {n:'Acil Geometri', d:'Zor'}
+        ],
+        'TYT Fizik': [
+            {n:'Aktif Fizik', d:'Kolay'}, {n:'Hız ve Renk Fizik', d:'Kolay'}, {n:'Palme Fizik', d:'Orta'}, {n:'Bilgi Sarmal Fizik', d:'Orta'}, {n:'345 Fizik', d:'Orta'}, {n:'Yayın Denizi Fizik', d:'Orta'}, {n:'Çap Fizik', d:'Orta'}, {n:'3D Fizik', d:'Zor'}, {n:'Nihat Bilik Fizik', d:'Zor'}, {n:'Karaağaç Fizik', d:'Zor'}
+        ],
+        'AYT Fizik': [
+            {n:'Aktif Fizik', d:'Kolay'}, {n:'Hız ve Renk Fizik', d:'Kolay'}, {n:'Palme Fizik', d:'Orta'}, {n:'Bilgi Sarmal Fizik', d:'Orta'}, {n:'345 Fizik', d:'Orta'}, {n:'Yayın Denizi Fizik', d:'Orta'}, {n:'Çap Fizik', d:'Orta'}, {n:'3D Fizik', d:'Zor'}, {n:'Nihat Bilik Fizik', d:'Zor'}, {n:'Karaağaç Fizik', d:'Zor'}
+        ],
+        'TYT Kimya': [
+            {n:'Hız ve Renk Kimya', d:'Kolay'}, {n:'Aktif Kimya', d:'Kolay'}, {n:'Palme Kimya', d:'Orta'}, {n:'Orbital Kimya', d:'Orta'}, {n:'Bilgi Sarmal Kimya', d:'Orta'}, {n:'345 Kimya', d:'Orta'}, {n:'Miray Kimya', d:'Orta'}, {n:'Aydın Kimya', d:'Zor'}, {n:'3D Kimya', d:'Zor'}, {n:'Paraf Kimya', d:'Zor'}
+        ],
+        'AYT Kimya': [
+            {n:'Hız ve Renk Kimya', d:'Kolay'}, {n:'Aktif Kimya', d:'Kolay'}, {n:'Palme Kimya', d:'Orta'}, {n:'Orbital Kimya', d:'Orta'}, {n:'Bilgi Sarmal Kimya', d:'Orta'}, {n:'345 Kimya', d:'Orta'}, {n:'Miray Kimya', d:'Orta'}, {n:'Aydın Kimya', d:'Zor'}, {n:'3D Kimya', d:'Zor'}, {n:'Paraf Kimya', d:'Zor'}
+        ],
+        'TYT Biyoloji': [
+            {n:'Hız ve Renk Biyoloji', d:'Kolay'}, {n:'Aktif Biyoloji', d:'Kolay'}, {n:'Biyotik Biyoloji', d:'Orta'}, {n:'Palme Biyoloji', d:'Orta'}, {n:'Bilgi Sarmal Biyoloji', d:'Orta'}, {n:'345 Biyoloji', d:'Orta'}, {n:'Çap Biyoloji', d:'Orta'}, {n:'Limit Biyoloji', d:'Zor'}, {n:'3D Biyoloji', d:'Zor'}, {n:'Paraf Biyoloji', d:'Zor'}
+        ],
+        'AYT Biyoloji': [
+            {n:'Hız ve Renk Biyoloji', d:'Kolay'}, {n:'Aktif Biyoloji', d:'Kolay'}, {n:'Biyotik Biyoloji', d:'Orta'}, {n:'Palme Biyoloji', d:'Orta'}, {n:'Bilgi Sarmal Biyoloji', d:'Orta'}, {n:'345 Biyoloji', d:'Orta'}, {n:'Çap Biyoloji', d:'Orta'}, {n:'Limit Biyoloji', d:'Zor'}, {n:'3D Biyoloji', d:'Zor'}, {n:'Paraf Biyoloji', d:'Zor'}
+        ],
+        'Edebiyat': [
+            {n:'Hız ve Renk Edebiyat', d:'Kolay'}, {n:'Benim Hocam Edebiyat', d:'Kolay'}, {n:'Yayın Denizi Edebiyat', d:'Orta'}, {n:'Bilgi Sarmal Edebiyat', d:'Orta'}, {n:'Palme Edebiyat', d:'Orta'}, {n:'Çap Edebiyat', d:'Orta'}, {n:'Limit Edebiyat', d:'Zor'}, {n:'Paraf Edebiyat', d:'Zor'}, {n:'Karekök Edebiyat', d:'Zor'}, {n:'Apotemi Edebiyat', d:'Zor'}
+        ]
+    };
+
+    // --- ROZET TANIMLARI ---
+    const badgeDefs = [
+        { id:'first_step', name:'İlk Adım', icon:'🌟', desc:'Sisteme kayıt oldun', check: () => db.user !== null },
+        { id:'first_exam', name:'İlk Deneme', icon:'📝', desc:'İlk deneme girildi', check: () => db.exams.length >= 1 },
+        { id:'task_master', name:'Görev Ustası', icon:'💪', desc:'10 görev tamamladın', check: () => db.completed.length >= 10 },
+        { id:'bookworm', name:'Kitap Kurdu', icon:'📚', desc:'5 kaynak ekledin', check: () => db.library.length >= 5 },
+        { id:'pomo_start', name:'Odak Başlangıcı', icon:'⏱️', desc:'İlk pomodoro seansı', check: () => db.pomodoro.sessions >= 1 },
+        { id:'pomo_master', name:'Pomodoro Ustası', icon:'🧘', desc:'10 seans tamamlandı', check: () => db.pomodoro.sessions >= 10 },
+        { id:'full_day', name:'Tam Gaz', icon:'🏆', desc:'Tüm günlük görevler tamam', check: () => db.plan.length > 0 && db.plan.every(t => db.completed.includes(t.instanceId)) },
+        { id:'analyst', name:'Analizci', icon:'📊', desc:'5 deneme girildi', check: () => db.exams.length >= 5 },
+        { id:'topic_hunter', name:'Konu Avcısı', icon:'🧠', desc:'20 konu tamamlandı', check: () => Object.values(db.topics).filter(v => v === true).length >= 20 },
+        { id:'study_3h', name:'Maratoncu', icon:'🔥', desc:'Bir günde 3 saat çalıştın', check: () => { const today = new Date().toISOString().split('T')[0]; return (db.pomodoro.dailyLog[today] || 0) >= 180; } },
+    ];
+
+    // --- POMODORO DEĞİŞKENLERİ ---
+    let pomoInterval = null, pomoTimeLeft = 25*60, pomoIsBreak = false, pomoRunning = false;
+    const CIRCUM = 339.292;
+
+    function toggleTheme() {
+        const body = document.documentElement;
+        if (body.getAttribute('data-theme') === 'dark') {
+            body.removeAttribute('data-theme');
+            document.getElementById('themeToggle').innerText = '🌙';
+            localStorage.setItem('theme', 'light');
+        } else {
+            body.setAttribute('data-theme', 'dark');
+            document.getElementById('themeToggle').innerText = '☀️';
+            localStorage.setItem('theme', 'dark');
+        }
+    }
 
     window.onload = () => {
-        const saved = localStorage.getItem('akilli_rota_ai_v4');
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.getElementById('themeToggle').innerText = '☀️';
+        }
+        const saved = localStorage.getItem('akilli_rota_ai_v5');
         if (saved) {
             db = JSON.parse(saved);
             if (!db.chatHistory) db.chatHistory = [];
+            if (!db.pomodoro) db.pomodoro = { sessions:0, totalMinutes:0, dailyLog:{} };
+            if (!db.topics) db.topics = {};
+            if (!db.badges) db.badges = [];
+            if (!db.mistakes) db.mistakes = [];
+            if (!db.activityLog) db.activityLog = [];
+            if (!db.flashcards) db.flashcards = [];
+            if (!db.moodLog) db.moodLog = {};
+            if (!db.questionLog) db.questionLog = {};
+            if (!db.calEvents) db.calEvents = [];
             startApp();
         } else {
             showPage('setup');
@@ -248,14 +664,30 @@
         renderLibrary();
         renderExams();
         renderChatHistory();
+        renderBadges();
+        renderPomoStats();
+        renderHomeStudyTime();
+        renderChart();
+        renderMotivation();
+        renderStreak();
+        renderWeeklySummary();
+        updateMistakeTopicOptions();
+        renderMistakes();
+        renderFlashcards();
+        renderMoodSelection();
+        renderQCount();
+        renderCalEvents();
         showPage('home');
     }
 
     function completeSetup() {
         const name = document.getElementById('setupName').value.trim();
         if (!name) return showToast("Sistemi başlatmak için isim girilmelidir.");
-        db.user = { name };
+        const uni = document.getElementById('setupUni').value.trim();
+        const dept = document.getElementById('setupDept').value.trim();
+        db.user = { name, targetUni: uni, targetDept: dept, coachPersonality: 'strict' };
         save();
+        checkBadges();
         startApp();
     }
 
@@ -263,7 +695,14 @@
     // YAPAY ZEKA KOÇLUK & SOHBET MOTORU (Puter.js Tam Korumalı)
     // ==========================================
     async function callAI(promptText) {
-        const systemInstruction = `Sen "Akıllı Rota" uygulamasının resmi, profesyonel ve disiplinli YKS Eğitim Koçusun. Görevlerin: 1. Deneme analizi yapıp zayıf yönleri tespit etmek. 2. Öğrenciyi resmi ve profesyonel bir dille motive etmek. 3. Öğrencinin kütüphanesindeki kitaplardan nokta atışı ödevler vermek. 4. Ödev özelleştirme/değiştirme isteklerini değerlendirmek. İstek mantıksızsa kesin bir dille RET verip pedagojik nedenini açıkla. İstek mantıklıysa ONAY ver. İkisi arasıysa İYİLEŞTİRME yap. HTML formatında (<b>, <ul>, <br>) net, kısa ve ciddi yanıtlar ver. Asla aşırı samimi olma.`;
+        const personalities = {
+            strict: 'Sen sert, disiplinli ve resmi bir YKS koçusun. Kesin ve net konuş, laubalilik yapma.',
+            motivator: 'Sen motive edici, pozitif ama profesyonel bir YKS koçusun. Öğrenciyi cesaretlendir ama gerçekçi ol.',
+            balanced: 'Sen dengeli, hem disiplinli hem destekleyici bir YKS koçusun.'
+        };
+        const personality = personalities[db.user?.coachPersonality || 'strict'];
+        const targetInfo = (db.user?.targetUni || db.user?.targetDept) ? `Öğrencinin Hedefi: ${db.user.targetUni || ''} ${db.user.targetDept || ''}. Yanıtlarında bu hedefe atıfta bulun.` : '';
+        const systemInstruction = `${personality} Sen "Akıllı Rota" uygulamasının resmi YKS Eğitim Koçusun. Görevlerin: 1. Deneme analizi yapıp zayıf yönleri tespit etmek. 2. Öğrenciyi motive etmek. 3. Öğrencinin kütüphanesindeki kitaplardan ödevler vermek. 4. Ödev isteklerini değerlendirmek. ${targetInfo} HTML formatında (<b>, <ul>, <br>) net, kısa yanıtlar ver.`;
         
         const fullPrompt = `${systemInstruction}\n\nİşte mevcut durum ve öğrencinin talebi:\n${promptText}`;
 
@@ -424,6 +863,10 @@
         renderExamForm();
         save();
         renderExams();
+        renderChart();
+        checkBadges();
+        logActivity();
+        renderWeeklySummary();
         showToast("Veriler sisteme işlendi.");
     }
 
@@ -473,18 +916,48 @@
         else if(cat === 'AYT-EA') list = ["AYT Matematik", "AYT Geometri", "Edebiyat", "Tarih-1", "Coğrafya-1"];
         else if(cat === 'AYT-SOZ') list = ["Edebiyat", "Tarih-1", "Coğrafya-1", "Tarih-2", "Coğrafya-2", "Felsefe Grubu", "Din Kültürü"];
         list.forEach(ders => { dersSelect.insertAdjacentHTML('beforeend', `<option value="${ders}">${ders}</option>`); });
+        
+        updateBookSuggestions();
+    }
+
+    function updateBookSuggestions() {
+        const ders = document.getElementById('libBookDers').value;
+        const dl = document.getElementById('bookSuggestions');
+        if (!dl) return;
+        dl.innerHTML = '';
+        if (famousBooks[ders]) {
+            famousBooks[ders].forEach(b => {
+                dl.insertAdjacentHTML('beforeend', `<option value="${b.n}"></option>`);
+            });
+        } else {
+            // Jenerik liste (örn. Tarih/Coğrafya/Din için)
+            ['Hız ve Renk', 'Benim Hocam', 'Bilgi Sarmal', '345', 'Yayın Denizi', 'Paraf', 'Limit'].forEach(b => dl.insertAdjacentHTML('beforeend', `<option value="${b}"></option>`));
+        }
+    }
+
+    function autoSetDifficulty() {
+        const ders = document.getElementById('libBookDers').value;
+        const name = document.getElementById('libBookName').value;
+        if (famousBooks[ders]) {
+            const found = famousBooks[ders].find(b => b.n === name);
+            if (found) {
+                document.getElementById('libBookDifficulty').value = found.d;
+            }
+        }
     }
 
     function addNewCustomBook() {
         const name = document.getElementById('libBookName').value.trim();
         const ders = document.getElementById('libBookDers').value;
+        const diff = document.getElementById('libBookDifficulty').value;
         if (!name) return showToast("Kaynak adı gereklidir.");
-        db.library.push({ id: Date.now(), ad: name, ders: ders });
-        document.getElementById('libBookName').value = ""; save(); renderLibrary(); showToast("Kaynak eklendi.");
+        db.library.push({ id: Date.now(), ad: name, ders: ders, finished: false, difficulty: diff });
+        document.getElementById('libBookName').value = ""; save(); renderLibrary(); showToast("Yeni kaynak eklendi! Başarılar 🚀");
     }
 
     function generateDailyPlan() {
-        const selected = db.library.sort(() => 0.5 - Math.random()).slice(0, 3);
+        const activeBooks = db.library.filter(b => !b.finished);
+        const selected = activeBooks.sort(() => 0.5 - Math.random()).slice(0, 3);
         db.plan = selected.map(book => ({ ...book, instanceId: 'task_' + Date.now() + Math.random().toString(36).substr(2, 5), target: book.ders.includes("Türkçe") ? "40 Soru Çözümü" : "3 Test Çözümü" }));
         save();
     }
@@ -523,36 +996,111 @@
 
     function toggleTaskStatus(instanceId) {
         if (db.completed.includes(instanceId)) db.completed = db.completed.filter(id => id !== instanceId);
-        else { db.completed.push(instanceId); showToast("Görev başarıyla tamamlandı."); }
+        else { db.completed.push(instanceId); showToast("Görev başarıyla tamamlandı."); checkBadges(); logActivity(); renderWeeklySummary(); }
         save(); renderPlan();
     }
 
+    function getPriorityMistakeTopic() {
+        const unresolved = db.mistakes.filter(m => !m.resolved);
+        if (unresolved.length === 0) return null;
+        
+        const counts = {};
+        unresolved.forEach(m => {
+            const key = JSON.stringify({ subject: m.subject, topic: m.topic || 'Genel' });
+            counts[key] = (counts[key] || 0) + 1;
+        });
+        
+        let maxTopicStr = null;
+        let maxCount = 0;
+        for (const [key, count] of Object.entries(counts)) {
+            if (count > maxCount) {
+                maxCount = count;
+                maxTopicStr = key;
+            }
+        }
+        return JSON.parse(maxTopicStr);
+    }
+
     function addExtraTask() {
-        const unused = db.library.filter(b => !db.plan.some(p => p.id === b.id));
-        if (unused.length > 0) {
-            const book = unused[Math.floor(Math.random() * unused.length)];
-            db.plan.push({ ...book, instanceId: 'task_' + Date.now(), target: "Ekstra Görev: 2 Test" });
-            save(); renderPlan(); showToast("Manuel görev atandı.");
-        } else { showToast("Kütüphanedeki tüm kaynaklar aktif planda."); }
+        const activeBooks = db.library.filter(b => !b.finished);
+        if (activeBooks.length === 0) {
+            return showToast("Aktif kütüphanedeki tüm kitaplar bitmiş. Lütfen yeni kaynak ekleyin!");
+        }
+
+        const selectedDiffSelect = document.getElementById('taskDiffSelect');
+        const selectedDiff = selectedDiffSelect ? selectedDiffSelect.value : 'Karışık';
+        
+        let availableForDiff = activeBooks;
+        if (selectedDiff !== 'Karışık') {
+            const diffFiltered = activeBooks.filter(b => b.difficulty === selectedDiff);
+            if (diffFiltered.length > 0) availableForDiff = diffFiltered;
+            else showToast(`${selectedDiff} seviyesinde bitmemiş kitap bulunamadı, farklı zorluktan seçiliyor.`);
+        }
+
+        const priority = getPriorityMistakeTopic();
+        let book = availableForDiff[Math.floor(Math.random() * availableForDiff.length)];
+        let targetText = "Ekstra Görev: 2 Test Çöz";
+
+        if (priority) {
+            const matchingBooks = availableForDiff.filter(b => b.ders.includes(priority.subject));
+            if (matchingBooks.length > 0) {
+                book = matchingBooks[Math.floor(Math.random() * matchingBooks.length)];
+            }
+            
+            let ytSuggestion = "";
+            if (ytChannels[priority.subject]) {
+                const ch = ytChannels[priority.subject];
+                const randomCh = ch[Math.floor(Math.random() * ch.length)];
+                ytSuggestion = `📺 ${randomCh} İzle`;
+            }
+
+            const topicDisplay = priority.topic && priority.topic !== 'Genel' ? priority.topic : priority.subject;
+            targetText = `Eksik: ${topicDisplay} (2 Test) ${ytSuggestion}`;
+            showToast(`Eksik analizi: ${topicDisplay} konusuna odaklanılıyor.`);
+        } else {
+            showToast("Manuel görev atandı.");
+        }
+
+        db.plan.push({ ...book, instanceId: 'task_' + Date.now(), target: targetText });
+        save(); renderPlan();
+    }
+
+    function toggleBookFinished(id) {
+        const book = db.library.find(b => b.id === id);
+        if (book) {
+            book.finished = !book.finished;
+            save(); renderLibrary();
+            if (book.finished) showToast(`Tebrikler! 🎉 ${book.ad} kitabını bitirdin!`);
+        }
     }
 
     function renderLibrary() {
         const list = document.getElementById('fullLibraryList');
-        list.innerHTML = db.library.map(book => `
-            <div class="card" style="padding: 12px; margin-bottom: 10px; display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <div style="font-size:14px; font-weight:700;">${book.ad}</div>
-                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${book.ders}</div>
+        if (db.library.length === 0) { list.innerHTML = '<p style="font-size:13px;color:var(--text-muted);text-align:center;padding:15px;">Henüz kaynak eklenmedi.</p>'; return; }
+        list.innerHTML = db.library.map(book => {
+            let diffTag = '';
+            if (book.difficulty) {
+                let color = book.difficulty === 'Kolay' ? 'var(--success)' : (book.difficulty === 'Zor' ? 'var(--danger)' : '#eab308');
+                diffTag = `<span style="font-size:9px; font-weight:800; color:${color}; border:1px solid ${color}; padding:2px 6px; border-radius:10px; margin-left:6px;">${book.difficulty}</span>`;
+            }
+            return `
+            <div class="card" style="padding: 12px; margin-bottom: 10px; display:flex; justify-content:space-between; align-items:center; ${book.finished ? 'opacity:0.6; background:#f8fafc;' : ''}">
+                <div style="display:flex; align-items:center; gap:12px; flex:1;">
+                    <div class="check-box ${book.finished ? 'checked' : ''}" style="width:20px;height:20px;min-width:20px;" onclick="toggleBookFinished(${book.id})"></div>
+                    <div>
+                        <div style="font-size:14px; font-weight:700; ${book.finished ? 'text-decoration:line-through; color:var(--text-muted);' : ''}">${book.ad} ${diffTag}</div>
+                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${book.ders} ${book.finished ? ' (Bitti)' : ''}</div>
+                    </div>
                 </div>
                 <button onclick="removeBook(${book.id})" style="background:none; border:none; color:var(--danger); font-size:18px; cursor:pointer;">×</button>
             </div>
-        `).join('');
+        `}).join('');
     }
 
     function removeBook(id) { if(confirm("Kaynağı silmek istediğinize emin misiniz?")) { db.library = db.library.filter(b => b.id !== id); save(); renderLibrary(); } }
 
-    function save() { localStorage.setItem('akilli_rota_ai_v4', JSON.stringify(db)); }
-    function showPage(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-' + id).classList.add('active'); }
+    function save() { localStorage.setItem('akilli_rota_ai_v5', JSON.stringify(db)); }
+    function showPage(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-' + id).classList.add('active'); if(id==='settings') loadSettingsForm(); }
     function showTab(tab, el) { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); showPage(tab); }
     function updateCountdown() {
         const diff = Math.ceil((new Date('2026-06-20') - new Date()) / (1000*60*60*24));
@@ -566,6 +1114,425 @@
     function showToast(msg) {
         const t = document.getElementById('toast'); t.innerText = msg;
         t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000);
+    }
+
+    // ==========================================
+    // POMODORO ZAMANLAYICI
+    // ==========================================
+    function togglePomodoro() {
+        if (pomoRunning) { clearInterval(pomoInterval); pomoRunning = false; document.getElementById('pomoBtnStart').innerText = 'Devam'; }
+        else { pomoRunning = true; document.getElementById('pomoBtnStart').innerText = 'Duraklat'; pomoInterval = setInterval(pomoTick, 1000); }
+    }
+    function resetPomodoro() {
+        clearInterval(pomoInterval); pomoRunning = false; pomoIsBreak = false; pomoTimeLeft = 25*60;
+        document.getElementById('pomoBtnStart').innerText = 'Başlat';
+        document.getElementById('timerModeLabel').innerText = 'ÇALIŞMA MODU';
+        document.getElementById('timerProgress').classList.remove('break-mode');
+        updateTimerDisplay();
+    }
+    function pomoTick() {
+        pomoTimeLeft--;
+        if (pomoTimeLeft <= 0) {
+            clearInterval(pomoInterval); pomoRunning = false;
+            if (!pomoIsBreak) {
+                db.pomodoro.sessions++;
+                db.pomodoro.totalMinutes += 25;
+                const today = new Date().toISOString().split('T')[0];
+                db.pomodoro.dailyLog[today] = (db.pomodoro.dailyLog[today] || 0) + 25;
+                save(); renderPomoStats(); renderHomeStudyTime(); checkBadges(); logActivity(); renderWeeklySummary();
+                showToast('🎉 Pomodoro tamamlandı! Mola zamanı.');
+                pomoIsBreak = true; pomoTimeLeft = 5*60;
+                document.getElementById('timerModeLabel').innerText = 'MOLA MODU';
+                document.getElementById('timerProgress').classList.add('break-mode');
+            } else {
+                showToast('⏰ Mola bitti! Çalışmaya dönelim.');
+                pomoIsBreak = false; pomoTimeLeft = 25*60;
+                document.getElementById('timerModeLabel').innerText = 'ÇALIŞMA MODU';
+                document.getElementById('timerProgress').classList.remove('break-mode');
+            }
+            document.getElementById('pomoBtnStart').innerText = 'Başlat';
+        }
+        updateTimerDisplay();
+    }
+    function updateTimerDisplay() {
+        const m = Math.floor(pomoTimeLeft / 60), s = pomoTimeLeft % 60;
+        document.getElementById('timerDisplay').innerText = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        const total = pomoIsBreak ? 5*60 : 25*60;
+        const offset = CIRCUM * (1 - pomoTimeLeft / total);
+        document.getElementById('timerProgress').style.strokeDashoffset = offset;
+    }
+    function renderPomoStats() {
+        document.getElementById('pomoSessions').innerText = db.pomodoro.sessions;
+        const today = new Date().toISOString().split('T')[0];
+        const todayMin = db.pomodoro.dailyLog[today] || 0;
+        document.getElementById('pomoToday').innerText = todayMin + 'dk';
+        const totalH = (db.pomodoro.totalMinutes / 60).toFixed(1);
+        document.getElementById('pomoTotal').innerText = totalH + 'sa';
+    }
+    function renderHomeStudyTime() {
+        const today = new Date().toISOString().split('T')[0];
+        const todayMin = db.pomodoro?.dailyLog?.[today] || 0;
+        document.getElementById('homeStudyTime').innerText = todayMin + 'dk';
+    }
+
+    // ==========================================
+    // ROZET SİSTEMİ
+    // ==========================================
+    function checkBadges() {
+        badgeDefs.forEach(b => {
+            if (!db.badges.includes(b.id) && b.check()) {
+                db.badges.push(b.id);
+                showToast(`🏅 Yeni Rozet: ${b.name}!`);
+            }
+        });
+        save(); renderBadges();
+    }
+    function renderBadges() {
+        const container = document.getElementById('badgeContainer');
+        if (!container) return;
+        container.innerHTML = badgeDefs.map(b => {
+            const unlocked = db.badges.includes(b.id);
+            return `<div class="badge-item ${unlocked ? '' : 'locked'}" title="${b.desc}"><div class="badge-icon">${b.icon}</div><div class="badge-name">${b.name}</div></div>`;
+        }).join('');
+    }
+
+    // ==========================================
+    // HEDEF ÜNİVERSİTE PANELI
+    // ==========================================
+    function renderHomeTarget() {
+        const card = document.getElementById('homeTargetCard');
+        const text = document.getElementById('homeTargetText');
+        if (db.user?.targetUni || db.user?.targetDept) {
+            card.style.display = 'block';
+            text.innerText = `${db.user.targetUni || ''} - ${db.user.targetDept || ''}`;
+        } else { card.style.display = 'none'; }
+    }
+
+    // ==========================================
+    // KONU TAKİBİ
+    // ==========================================
+    function renderTopics() {
+        const cat = document.getElementById('topicCategorySelect').value;
+        const data = topicData[cat];
+        const container = document.getElementById('topicsContainer');
+        if (!data) { container.innerHTML = ''; return; }
+        container.innerHTML = Object.entries(data).map(([subject, topics]) => {
+            const done = topics.filter(t => db.topics[cat+'_'+subject+'_'+t]).length;
+            const pct = Math.round((done/topics.length)*100);
+            const topicsHtml = topics.map(t => {
+                const key = cat+'_'+subject+'_'+t;
+                const isDone = db.topics[key] ? 'done' : '';
+                return `<div class="topic-item"><div class="topic-check ${isDone}" onclick="toggleTopic('${key}')"></div><span>${t}</span></div>`;
+            }).join('');
+            return `<div class="card topic-subject-card" onclick="this.classList.toggle('open')">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div><div style="font-size:14px;font-weight:700;">${subject}</div><div style="font-size:11px;color:var(--text-muted);">${done}/${topics.length} konu (%${pct})</div></div>
+                    <span style="font-size:12px;color:var(--text-muted);">▼</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+                <div class="collapse-content" onclick="event.stopPropagation()">${topicsHtml}</div>
+            </div>`;
+        }).join('');
+    }
+    function toggleTopic(key) {
+        db.topics[key] = !db.topics[key];
+        save(); renderTopics(); checkBadges();
+    }
+
+    // ==========================================
+    // NET GELİŞİM GRAFİĞİ (Chart.js)
+    // ==========================================
+    let netChartInstance = null;
+    function renderChart() {
+        if (db.exams.length < 2) { document.getElementById('chartCard').style.display = 'none'; return; }
+        document.getElementById('chartCard').style.display = 'block';
+        const sorted = [...db.exams].sort((a,b) => new Date(a.date) - new Date(b.date));
+        const labels = sorted.map(e => e.name.substring(0,12));
+        const data = sorted.map(e => e.totalNet);
+        if (netChartInstance) netChartInstance.destroy();
+        const ctx = document.getElementById('netChart').getContext('2d');
+        netChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: { labels, datasets: [{ label: 'Toplam Net', data, borderColor: '#4f46e5', backgroundColor: 'rgba(79,70,229,0.1)', fill: true, tension: 0.3, pointRadius: 5, pointBackgroundColor: '#4f46e5' }] },
+            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(100,116,139,0.1)' } }, x: { grid: { display: false } } } }
+        });
+    }
+
+    // ==========================================
+    // AYARLAR & PROFİL
+    // ==========================================
+    function loadSettingsForm() {
+        if (!db.user) return;
+        document.getElementById('settingsUserName').innerText = db.user.name;
+        const target = [db.user.targetUni, db.user.targetDept].filter(Boolean).join(' - ');
+        document.getElementById('settingsTarget').innerText = target || 'Hedef belirlenmedi';
+        document.getElementById('settingsName').value = db.user.name || '';
+        document.getElementById('settingsUni').value = db.user.targetUni || '';
+        document.getElementById('settingsDept').value = db.user.targetDept || '';
+        document.getElementById('settingsPersonality').value = db.user.coachPersonality || 'strict';
+    }
+    function saveSettings() {
+        db.user.name = document.getElementById('settingsName').value.trim() || db.user.name;
+        db.user.targetUni = document.getElementById('settingsUni').value.trim();
+        db.user.targetDept = document.getElementById('settingsDept').value.trim();
+        db.user.coachPersonality = document.getElementById('settingsPersonality').value;
+        save(); loadSettingsForm(); showToast('Ayarlar kaydedildi.');
+    }
+    function exportData() {
+        const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'akilli_rota_yedek.json'; a.click();
+        showToast('Veriler dışa aktarıldı.');
+    }
+    function resetAllData() {
+        if (confirm('⚠️ TÜM verileriniz silinecek! Emin misiniz?')) {
+            localStorage.removeItem('akilli_rota_ai_v5');
+            location.reload();
+        }
+    }
+
+    // ==========================================
+    // MOTİVASYON SÖZÜ
+    // ==========================================
+    function renderMotivation() {
+        const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(),0,0)) / 86400000);
+        const quote = motivationQuotes[dayOfYear % motivationQuotes.length];
+        document.getElementById('motivationText').innerText = quote;
+    }
+
+    // ==========================================
+    // ÇALIŞMA SERİSİ (STREAK)
+    // ==========================================
+    function logActivity() {
+        const today = new Date().toISOString().split('T')[0];
+        if (!db.activityLog.includes(today)) {
+            db.activityLog.push(today);
+            save();
+        }
+        renderStreak();
+    }
+    function renderStreak() {
+        let streak = 0;
+        const today = new Date();
+        for (let i = 0; i < 365; i++) {
+            const d = new Date(today);
+            d.setDate(d.getDate() - i);
+            const key = d.toISOString().split('T')[0];
+            if (db.activityLog.includes(key) || (db.pomodoro.dailyLog && db.pomodoro.dailyLog[key])) {
+                streak++;
+            } else {
+                if (i > 0) break;
+            }
+        }
+        document.getElementById('streakCount').innerText = streak;
+    }
+
+    // ==========================================
+    // HAFTALIK ÖZET
+    // ==========================================
+    function renderWeeklySummary() {
+        const now = new Date();
+        const weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate() - 7);
+        const weekTasks = db.completed.length;
+        let weekStudyMin = 0;
+        if (db.pomodoro.dailyLog) {
+            Object.entries(db.pomodoro.dailyLog).forEach(([date, min]) => {
+                if (new Date(date) >= weekAgo) weekStudyMin += min;
+            });
+        }
+        const weekExams = db.exams.filter(e => new Date(e.date) >= weekAgo).length;
+        let weekPomoCount = 0;
+        if (db.pomodoro.dailyLog) {
+            Object.entries(db.pomodoro.dailyLog).forEach(([date, min]) => {
+                if (new Date(date) >= weekAgo) weekPomoCount += Math.floor(min / 25);
+            });
+        }
+        // Analiz sayfasındaki haftalık özet
+        const ids = [['exaWeekTasks',weekTasks],['exaWeekStudy',weekStudyMin+'dk'],['exaWeekExams',weekExams],['exaWeekPomo',weekPomoCount]];
+        ids.forEach(([id, val]) => { const el = document.getElementById(id); if(el) el.innerText = val; });
+    }
+
+    // ==========================================
+    // HATA DEFTERİ
+    // ==========================================
+    function updateMistakeTopicOptions() {
+        const subject = document.getElementById('mistakeSubject').value;
+        const topicSelect = document.getElementById('mistakeTopic');
+        let topics = [];
+        if (topicData['TYT'][subject]) topics = topics.concat(topicData['TYT'][subject]);
+        if (topicData['AYT'][subject]) topics = topics.concat(topicData['AYT'][subject]);
+        
+        topics = [...new Set(topics)];
+        if (topics.length === 0) {
+            topicSelect.innerHTML = '<option value="Genel">Genel</option>';
+        } else {
+            topicSelect.innerHTML = topics.map(t => `<option value="${t}">${t}</option>`).join('');
+        }
+    }
+
+    let mistakeFilter = 'all';
+    function addMistake() {
+        const subject = document.getElementById('mistakeSubject').value;
+        const topic = document.getElementById('mistakeTopic').value;
+        const question = document.getElementById('mistakeQuestion').value.trim();
+        const note = document.getElementById('mistakeNote').value.trim();
+        if (!question) return showToast('Soru detayı giriniz.');
+        db.mistakes.push({ id: Date.now(), subject, topic, question, note, date: new Date().toISOString().split('T')[0], resolved: false });
+        document.getElementById('mistakeQuestion').value = '';
+        document.getElementById('mistakeNote').value = '';
+        save(); renderMistakes(); logActivity();
+        showToast('Hata kaydedildi.');
+    }
+    function toggleMistakeResolved(id) {
+        const m = db.mistakes.find(x => x.id === id);
+        if (m) { m.resolved = !m.resolved; save(); renderMistakes(); }
+    }
+    function removeMistake(id) {
+        if (confirm('Bu hata kaydını silmek istiyor musunuz?')) {
+            db.mistakes = db.mistakes.filter(x => x.id !== id);
+            save(); renderMistakes();
+        }
+    }
+    function renderMistakes() {
+        const subjects = [...new Set(db.mistakes.map(m => m.subject))];
+        const filterContainer = document.getElementById('mistakeFilterContainer');
+        filterContainer.innerHTML = `<button class="btn" style="padding:6px 12px;font-size:11px;width:auto;border-radius:20px;${mistakeFilter==='all'?'background:var(--primary);color:#fff;':'background:var(--border-color);color:var(--text-main);'}" onclick="mistakeFilter='all';renderMistakes()">Tümü</button>` +
+            subjects.map(s => `<button class="btn" style="padding:6px 12px;font-size:11px;width:auto;border-radius:20px;${mistakeFilter===s?'background:var(--danger);color:#fff;':'background:var(--border-color);color:var(--text-main);'}" onclick="mistakeFilter='${s}';renderMistakes()">${s}</button>`).join('');
+
+        const filtered = mistakeFilter === 'all' ? db.mistakes : db.mistakes.filter(m => m.subject === mistakeFilter);
+        const list = document.getElementById('mistakesList');
+        if (filtered.length === 0) { list.innerHTML = '<p style="font-size:13px;color:var(--text-muted);text-align:center;padding:20px 0;">Henüz hata kaydı yok.</p>'; return; }
+        list.innerHTML = [...filtered].reverse().map(m => `
+            <div class="card mistake-card" style="${m.resolved?'opacity:0.5;border-left-color:var(--success);':''}">
+                <div class="mistake-subject">${m.subject} ${m.topic && m.topic !== 'Genel' ? ' - ' + m.topic : ''}</div>
+                <div style="font-size:14px;font-weight:700;margin-bottom:4px;${m.resolved?'text-decoration:line-through;':''}">${m.question}</div>
+                ${m.note ? `<div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">${m.note}</div>` : ''}
+                <div style="font-size:10px;color:var(--text-muted);margin-bottom:8px;">📅 ${m.date}</div>
+                <div style="display:flex;gap:6px;">
+                    <button onclick="toggleMistakeResolved(${m.id})" style="flex:1;padding:6px;border:none;border-radius:6px;font-weight:700;font-size:11px;cursor:pointer;background:${m.resolved?'#fef3c7;color:#d97706':'#ecfdf5;color:var(--success)'}">${m.resolved?'↩ Tekrar Aç':'✔ Çözüldü'}</button>
+                    <button onclick="removeMistake(${m.id})" style="padding:6px 10px;border:none;border-radius:6px;font-weight:700;font-size:11px;cursor:pointer;background:#fef2f2;color:var(--danger);">×</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ==========================================
+    // BİLGİ KARTLARI (FLASHCARDS)
+    // ==========================================
+    let fcCurrentIndex = 0;
+    function addFlashcard() {
+        const subject = document.getElementById('fcSubject').value;
+        const front = document.getElementById('fcFront').value.trim();
+        const back = document.getElementById('fcBack').value.trim();
+        if (!front || !back) return showToast('Ön ve arka yüzü doldurunuz.');
+        db.flashcards.push({ id: Date.now(), subject, front, back });
+        document.getElementById('fcFront').value = '';
+        document.getElementById('fcBack').value = '';
+        save(); renderFlashcards(); logActivity();
+        showToast('Bilgi kartı eklendi.');
+    }
+    function removeFlashcard(id) {
+        db.flashcards = db.flashcards.filter(f => f.id !== id);
+        save(); renderFlashcards();
+    }
+    function renderFlashcards() {
+        document.getElementById('fcTotal').innerText = db.flashcards.length;
+        const area = document.getElementById('fcReviewArea');
+        if (db.flashcards.length > 0) {
+            area.style.display = 'block';
+            if (fcCurrentIndex >= db.flashcards.length) fcCurrentIndex = 0;
+            const card = db.flashcards[fcCurrentIndex];
+            document.getElementById('fcFrontDisplay').innerText = card.front;
+            document.getElementById('fcBackDisplay').innerText = card.back;
+            document.getElementById('fcIndex').innerText = `${fcCurrentIndex+1} / ${db.flashcards.length}`;
+            document.getElementById('fcCard').classList.remove('flipped');
+        } else { area.style.display = 'none'; }
+        const list = document.getElementById('fcList');
+        if (db.flashcards.length === 0) { list.innerHTML = '<p style="font-size:13px;color:var(--text-muted);text-align:center;padding:15px;">Henüz kart eklenmedi.</p>'; return; }
+        list.innerHTML = db.flashcards.map(f => `
+            <div class="card" style="padding:12px;margin-bottom:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div><div style="font-size:10px;font-weight:700;color:var(--primary);">${f.subject}</div><div style="font-size:13px;font-weight:700;">${f.front}</div><div style="font-size:11px;color:var(--text-muted);">${f.back}</div></div>
+                    <button onclick="removeFlashcard(${f.id})" style="background:none;border:none;color:var(--danger);font-size:18px;cursor:pointer;">×</button>
+                </div>
+            </div>
+        `).join('');
+    }
+    function nextFlashcard() { fcCurrentIndex = (fcCurrentIndex + 1) % db.flashcards.length; renderFlashcards(); }
+    function prevFlashcard() { fcCurrentIndex = (fcCurrentIndex - 1 + db.flashcards.length) % db.flashcards.length; renderFlashcards(); }
+
+    // ==========================================
+    // RUH HALİ TAKİBİ
+    // ==========================================
+    function setMood(level) {
+        const today = new Date().toISOString().split('T')[0];
+        db.moodLog[today] = level;
+        save(); renderMoodSelection(); logActivity();
+        const moods = ['😩','😟','😐','🙂','😄'];
+        showToast(`Ruh halin kaydedildi: ${moods[level-1]}`);
+    }
+    function renderMoodSelection() {
+        const today = new Date().toISOString().split('T')[0];
+        const todayMood = db.moodLog?.[today];
+        const buttons = document.querySelectorAll('.mood-btn');
+        buttons.forEach(btn => {
+            const level = parseInt(btn.getAttribute('onclick').match(/\d/)[0]);
+            btn.classList.toggle('selected', level === todayMood);
+        });
+    }
+
+    // ==========================================
+    // GÜNLÜK SORU SAYACI
+    // ==========================================
+    function changeQCount(delta) {
+        const today = new Date().toISOString().split('T')[0];
+        if (!db.questionLog[today]) db.questionLog[today] = 0;
+        db.questionLog[today] = Math.max(0, db.questionLog[today] + delta);
+        save(); renderQCount();
+        if (delta > 0) logActivity();
+    }
+    function renderQCount() {
+        const today = new Date().toISOString().split('T')[0];
+        const count = db.questionLog?.[today] || 0;
+        document.getElementById('qCountDisplay').innerText = count;
+    }
+
+    // ==========================================
+    // SINAV TAKVİMİ
+    // ==========================================
+    function addCalEvent() {
+        const name = document.getElementById('calName').value.trim();
+        const date = document.getElementById('calDate').value;
+        if (!name || !date) return showToast('Ad ve tarih giriniz.');
+        db.calEvents.push({ id: Date.now(), name, date });
+        document.getElementById('calName').value = '';
+        save(); renderCalEvents();
+        showToast('Etkinlik eklendi.');
+    }
+    function removeCalEvent(id) {
+        db.calEvents = db.calEvents.filter(e => e.id !== id);
+        save(); renderCalEvents();
+    }
+    function renderCalEvents() {
+        const list = document.getElementById('calEventsList');
+        const now = new Date(); now.setHours(0,0,0,0);
+        const upcoming = db.calEvents.filter(e => new Date(e.date) >= now).sort((a,b) => new Date(a.date) - new Date(b.date));
+        const past = db.calEvents.filter(e => new Date(e.date) < now).sort((a,b) => new Date(b.date) - new Date(a.date));
+        if (db.calEvents.length === 0) { list.innerHTML = '<p style="font-size:13px;color:var(--text-muted);text-align:center;padding:15px;">Henüz etkinlik eklenmedi.</p>'; return; }
+        let html = upcoming.map(e => {
+            const d = new Date(e.date);
+            const diff = Math.ceil((d - now) / 86400000);
+            const dateStr = `${d.getDate().toString().padStart(2,'0')}.${(d.getMonth()+1).toString().padStart(2,'0')}.${d.getFullYear()}`;
+            return `<div class="cal-event"><div style="display:flex;justify-content:space-between;align-items:center;"><div><div class="cal-date">📅 ${dateStr}</div><div class="cal-name">${e.name}</div><div class="cal-days">${diff === 0 ? '🔴 Bugün!' : `⏳ ${diff} gün kaldı`}</div></div><button onclick="removeCalEvent(${e.id})" style="background:none;border:none;color:var(--danger);font-size:16px;cursor:pointer;">×</button></div></div>`;
+        }).join('');
+        if (past.length > 0) {
+            html += '<div style="font-size:12px;font-weight:700;color:var(--text-muted);margin:12px 0 6px;">Geçmiş Etkinlikler</div>';
+            html += past.slice(0,5).map(e => {
+                const d = new Date(e.date);
+                const dateStr = `${d.getDate().toString().padStart(2,'0')}.${(d.getMonth()+1).toString().padStart(2,'0')}.${d.getFullYear()}`;
+                return `<div class="cal-event" style="opacity:0.5;border-left-color:var(--text-muted);"><div class="cal-date">${dateStr}</div><div class="cal-name">${e.name}</div></div>`;
+            }).join('');
+        }
+        list.innerHTML = html;
     }
 </script>
 </body>
