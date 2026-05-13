@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Akıllı Rota</title>
-    <script src="https://js.puter.com/v2/"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         /* --- PREMIUM CSS & YKS OPTİMİZASYONU --- */
@@ -38,23 +38,27 @@
             --input-bg: #0f172a;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         
         body { background: var(--bg-main); color: var(--text-main); height: 100vh; display: flex; justify-content: center; overflow: hidden; }
 
         .app-container { width: 100%; max-width: 500px; height: 100%; display: flex; flex-direction: column; position: relative; background: var(--bg-main); }
 
-        .page { display: none; flex: 1; padding: 25px 20px 90px 20px; overflow-y: auto; animation: fadeIn 0.2s ease; }
+        .page { display: none; flex: 1; padding: 25px 20px 90px 20px; overflow-y: auto; animation: fadeIn 0.35s cubic-bezier(.4,0,.2,1); }
         .page.active { display: block; }
         
         #page-coach.active { display: flex; flex-direction: column; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.05); } }
 
-        .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); padding: 16px; margin-bottom: 16px; }
+        .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); padding: 16px; margin-bottom: 16px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .card:active { transform: scale(0.985); }
 
-        .bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: 70px; background: var(--nav-bg); backdrop-filter: blur(10px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); cursor: pointer; width: 20%; font-size: 10px; font-weight: 700; gap: 3px; transition: 0.2s; }
+        .bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: 70px; background: var(--nav-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); cursor: pointer; width: 20%; font-size: 10px; font-weight: 700; gap: 3px; transition: all 0.25s ease; }
+        .nav-item:active { transform: scale(0.9); }
         .nav-item.active { color: var(--primary); }
 
         /* --- GÖREV KARTLARI --- */
@@ -90,18 +94,21 @@
         .msg-ai b { color: var(--ai-color); font-weight: 800; }
         .typing-indicator { font-size: 12px; color: var(--text-muted); font-style: italic; display: none; align-self: flex-start; margin-left: 10px; }
 
-        .btn { padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; width: 100%; font-size: 14px; }
-        .btn-primary { background: var(--primary); color: white; }
+        .btn { padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: all 0.25s ease; width: 100%; font-size: 14px; letter-spacing: 0.2px; }
+        .btn:active { transform: scale(0.96); }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), #6366f1); color: white; box-shadow: 0 4px 14px rgba(79,70,229,0.25); }
+        .btn-primary:hover { box-shadow: 0 6px 20px rgba(79,70,229,0.35); }
         .btn-secondary { background: var(--border-color); color: var(--text-main); margin-top: 10px; }
-        .btn-ai { background: linear-gradient(135deg, var(--primary), var(--ai-color)); color: white; margin-top: 10px; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); }
+        .btn-ai { background: linear-gradient(135deg, #6366f1, var(--ai-color), #ec4899); color: white; margin-top: 10px; box-shadow: 0 4px 18px rgba(139, 92, 246, 0.35); background-size: 200% 200%; animation: gradientShift 3s ease infinite; }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         
         .custom-input, .custom-select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 12px; outline: none; font-weight: 600; font-size: 14px; background: var(--input-bg); color: var(--text-main); }
         .custom-input:focus, .custom-select:focus { border-color: var(--primary); background: var(--card-bg); }
 
-        .header-title { font-size: 24px; font-weight: 800; color: var(--primary); margin-bottom: 20px; letter-spacing: -0.5px;}
-        .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--text-main); }
+        .header-title { font-size: 26px; font-weight: 900; color: var(--primary); margin-bottom: 20px; letter-spacing: -0.8px; }
+        .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--text-main); letter-spacing: -0.3px; }
 
-        #toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 30px; font-size: 13px; font-weight: 600; display: none; z-index: 2000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-align: center; min-width: 250px;}
+        #toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #1e293b, #334155); color: white; padding: 12px 24px; border-radius: 30px; font-size: 13px; font-weight: 600; display: none; z-index: 2000; box-shadow: 0 8px 24px rgba(0,0,0,0.2); text-align: center; min-width: 250px; animation: slideUp 0.3s ease; backdrop-filter: blur(10px); }
 
         /* --- POMODORO --- */
         .timer-wrap { display:flex; flex-direction:column; align-items:center; margin: 20px 0; }
@@ -135,9 +142,11 @@
         .topic-subject-card.open .collapse-content { display:block; }
 
         /* --- SETTINGS MENU CARD --- */
-        .menu-card { display:flex; align-items:center; gap:14px; cursor:pointer; padding:14px; }
-        .menu-card:active { transform:scale(0.98); }
-        .menu-icon { font-size:24px; width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-radius:12px; background:var(--bg-main); }
+        .menu-card { display:flex; align-items:center; gap:14px; cursor:pointer; padding:14px; transition: all 0.2s ease; }
+        .menu-card:active { transform:scale(0.97); }
+        .menu-icon { font-size:24px; width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-radius:12px; background: linear-gradient(135deg, var(--bg-main), var(--card-bg)); transition: transform 0.2s ease; }
+        .menu-card:active .menu-icon { transform: scale(1.1); }
+
 
         /* --- STREAK & MOTIVATION --- */
         .motivation-card { border-left:4px solid var(--secondary); font-style:italic; font-size:13px; line-height:1.6; color:var(--text-muted); }
@@ -320,23 +329,26 @@
     </div>
 
     <div id="page-coach" class="page">
-        <h1 class="header-title" style="color: var(--ai-color);">Akıllı Koç</h1>
-        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600;">Sistem Analizleri ve Ödev Özelleştirme Merkezi</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+            <h1 class="header-title" style="color: var(--ai-color);margin-bottom:0;">Akıllı Koç</h1>
+            <button onclick="clearChat()" style="background:none;border:1px solid var(--border-color);border-radius:10px;padding:6px 12px;font-size:11px;font-weight:700;color:var(--danger);cursor:pointer;">🗑️ Sohbeti Sıfırla</button>
+        </div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600;">Dertlerini anlat, deneme analizi iste, ödev talep et</p>
         
         <div id="chatContainer" class="chat-box">
-            <div class="msg-bubble msg-ai"><b>Sistem:</b> Merhaba, ben Akıllı Rota resmi koçunuz. Deneme verilerinizi analiz etmek ve size uygun stratejiyi belirlemek için buradayım. Planınızı değiştirmek veya itiraz etmek isterseniz buradan bana ulaşabilirsiniz.</div>
+            <div class="msg-bubble msg-ai"><b>Koç:</b> Merhaba! Ben senin YKS koçunum. Deneme sonuçlarını analiz edebilir, sana ödev verebilir veya sadece sohbet edebiliriz. Ne istersen yaz! 💪</div>
         </div>
         
         <div id="typingIndicator" class="typing-indicator">Koç yazıyor...</div>
 
         <div style="display: flex; gap: 8px; margin-top: 10px;">
-            <input type="text" id="chatInput" class="custom-input" style="margin: 0;" placeholder="Ödev değişikliği talep et veya soru sor..." onkeypress="handleChatEnter(event)">
+            <input type="text" id="chatInput" class="custom-input" style="margin: 0;" placeholder="Koçuna bir şey yaz..." onkeypress="handleChatEnter(event)">
             <button class="btn btn-primary" style="width: auto; background: var(--ai-color); padding: 0 20px;" onclick="sendUserMessage()">Gönder</button>
         </div>
     </div>
 
     <div id="page-library" class="page">
-        <h1 class="header-title">Kütüphane Yönetimi</h1>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><button onclick="showTab('settings',document.querySelectorAll('.nav-item')[4])" style="background:none;border:none;font-size:20px;cursor:pointer;">←</button><h1 class="header-title" style="margin-bottom:0;">Kütüphane Yönetimi</h1></div>
         
         <div class="card">
             <h2 class="section-title" style="font-size: 14px;">Yeni Kaynak Ekle</h2>
@@ -388,7 +400,7 @@
 
     <!-- TOPICS PAGE -->
     <div id="page-topics" class="page">
-        <h1 class="header-title">Konu Takibi 📚</h1>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><button onclick="showTab('settings',document.querySelectorAll('.nav-item')[4])" style="background:none;border:none;font-size:20px;cursor:pointer;">←</button><h1 class="header-title" style="margin-bottom:0;">Konu Takibi 📚</h1></div>
         <div style="margin-bottom:12px;">
             <select id="topicCategorySelect" class="custom-select" style="margin-bottom:0;" onchange="renderTopics()"><option value="TYT">TYT</option><option value="AYT">AYT</option></select>
         </div>
@@ -429,7 +441,7 @@
 
     <!-- HATA DEFTERİ PAGE -->
     <div id="page-mistakes" class="page">
-        <h1 class="header-title">Hata Defteri ✍️</h1>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><button onclick="showTab('settings',document.querySelectorAll('.nav-item')[4])" style="background:none;border:none;font-size:20px;cursor:pointer;">←</button><h1 class="header-title" style="margin-bottom:0;">Hata Defteri ✍️</h1></div>
         <div class="card">
             <h2 class="section-title" style="font-size:14px;">Yeni Hata Kaydı</h2>
             <div style="display:flex;gap:10px;margin-bottom:8px;">
@@ -446,7 +458,7 @@
 
     <!-- FLASHCARDS PAGE -->
     <div id="page-flashcards" class="page">
-        <h1 class="header-title">Bilgi Kartları 🃏</h1>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><button onclick="showTab('settings',document.querySelectorAll('.nav-item')[4])" style="background:none;border:none;font-size:20px;cursor:pointer;">←</button><h1 class="header-title" style="margin-bottom:0;">Bilgi Kartları 🃏</h1></div>
         <div class="card">
             <h2 class="section-title" style="font-size:14px;">Yeni Kart Ekle</h2>
             <select id="fcSubject" class="custom-select"><option value="Matematik">Matematik</option><option value="Fizik">Fizik</option><option value="Kimya">Kimya</option><option value="Biyoloji">Biyoloji</option><option value="Türkçe">Türkçe</option><option value="Tarih">Tarih</option></select>
@@ -468,7 +480,7 @@
 
     <!-- SINAV TAKVİMİ PAGE -->
     <div id="page-calendar" class="page">
-        <h1 class="header-title">Sınav Takvimi 📅</h1>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><button onclick="showTab('settings',document.querySelectorAll('.nav-item')[4])" style="background:none;border:none;font-size:20px;cursor:pointer;">←</button><h1 class="header-title" style="margin-bottom:0;">Sınav Takvimi 📅</h1></div>
         <div class="card">
             <h2 class="section-title" style="font-size:14px;">Yeni Etkinlik Ekle</h2>
             <input type="text" id="calName" class="custom-input" placeholder="Deneme / Sınav Adı">
@@ -692,50 +704,53 @@
     }
 
     // ==========================================
-    // YAPAY ZEKA KOÇLUK & SOHBET MOTORU (Puter.js Tam Korumalı)
+    // GERÇEK YAPAY ZEKA SOHBET MOTORU (Pollinations AI)
     // ==========================================
-    async function callAI(promptText) {
+    async function callRealAI(promptText) {
         const personalities = {
-            strict: 'Sen sert, disiplinli ve resmi bir YKS koçusun. Kesin ve net konuş, laubalilik yapma.',
-            motivator: 'Sen motive edici, pozitif ama profesyonel bir YKS koçusun. Öğrenciyi cesaretlendir ama gerçekçi ol.',
-            balanced: 'Sen dengeli, hem disiplinli hem destekleyici bir YKS koçusun.'
+            strict: 'Sen sert, disiplinli ve resmi bir YKS koçusun. Kesin ve net konuş, gereksiz uzatma.',
+            motivator: 'Sen motive edici, pozitif bir YKS koçusun. Öğrenciyi cesaretlendir.',
+            balanced: 'Sen dengeli, disiplinli ama destekleyici bir YKS koçusun.'
         };
         const personality = personalities[db.user?.coachPersonality || 'strict'];
-        const targetInfo = (db.user?.targetUni || db.user?.targetDept) ? `Öğrencinin Hedefi: ${db.user.targetUni || ''} ${db.user.targetDept || ''}. Yanıtlarında bu hedefe atıfta bulun.` : '';
-        const systemInstruction = `${personality} Sen "Akıllı Rota" uygulamasının resmi YKS Eğitim Koçusun. Görevlerin: 1. Deneme analizi yapıp zayıf yönleri tespit etmek. 2. Öğrenciyi motive etmek. 3. Öğrencinin kütüphanesindeki kitaplardan ödevler vermek. 4. Ödev isteklerini değerlendirmek. ${targetInfo} HTML formatında (<b>, <ul>, <br>) net, kısa yanıtlar ver.`;
+        const targetInfo = (db.user?.targetUni || db.user?.targetDept) ? `Öğrenci Hedefi: ${db.user.targetUni || ''} ${db.user.targetDept || ''}.` : '';
         
-        const fullPrompt = `${systemInstruction}\n\nİşte mevcut durum ve öğrencinin talebi:\n${promptText}`;
+        const systemMsg = `Sen "Akıllı Rota" YKS uygulamasının resmi Eğitim Koçusun. ${personality} ${targetInfo} Türkçe yanıt ver. Net, arkadaşça ve en fazla 2-3 cümlelik kısa yanıtlar ver. HTML kullanma, düz metin yaz.`;
+
+        const messages = [{ role: 'system', content: systemMsg }];
+        
+        // Son 6 mesajı sohbet geçmişi olarak ekle
+        const recentHistory = db.chatHistory.slice(-6);
+        recentHistory.forEach(m => {
+            messages.push({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text });
+        });
+        
+        // Şu anki mesajı ekle
+        messages.push({ role: 'user', content: promptText });
 
         try {
-            const response = await puter.ai.chat(fullPrompt);
-
-            // Gelen yanıtı tam korumalı şekilde string'e (metne) çeviriyoruz
-            if (typeof response === 'string') {
-                return response;
-            } else if (response && response.message && response.message.content) {
-                const content = response.message.content;
-                
-                // 1. Durum: Cevap bir dizi (array) olarak geldiyse (Örn: Claude/Gemini modelleri)
-                if (Array.isArray(content)) {
-                    return content.map(part => part.text || '').join('');
-                }
-                
-                // 2. Durum: Cevap bilinmeyen başka bir nesne (object) olarak geldiyse
-                if (typeof content === 'object') {
-                    return JSON.stringify(content);
-                }
-                
-                // 3. Durum: Standart düz metin (string)
-                return content;
-            } else if (response && response.text) {
-                return response.text;
-            } else {
-                return "<b>Sistem Uyarısı:</b> Koç modülü şu anda boş veya farklı formatta yanıt veriyor.";
-            }
-
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 sn zaman aşımı
+            const response = await fetch('https://text.pollinations.ai/openai', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: 'openai',
+                    messages: messages,
+                    max_tokens: 300
+                }),
+                signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+            if (!response.ok) return null;
+            const data = await response.json();
+            let text = data?.choices?.[0]?.message?.content || '';
+            text = text.replace(/^Koçun Cevabı:/i, '').trim();
+            text = text.replace(/^Koç:/i, '').trim();
+            return text || null;
         } catch (error) {
-            console.error("Puter AI Hatası:", error);
-            return "<b>Sistem Hatası:</b> Koç modülüyle bağlantı kurulamadı.";
+            console.error("AI Hatası:", error);
+            return null;
         }
     }
 
@@ -752,10 +767,28 @@
         document.getElementById('typingIndicator').style.display = 'block';
         scrollToBottom();
 
-        const context = `Öğrenci Adı: ${db.user.name}. Aktif Ödevleri: ${db.plan.map(p=>p.ad).join(', ')}. Öğrencinin Talebi: "${text}"`;
-        
-        const aiResponse = await callAI(context);
-        
+        // 1. Gerçek Yapay Zekaya (Ücretsiz & Limitsiz) istek atıyoruz
+        let aiResponse = await callRealAI(text);
+
+        // 2. Eğer internet kopuksa veya yapay zeka çökükse (Çevrimdışı Heuristik Yedek)
+        if (!aiResponse) {
+            const lower = text.toLowerCase();
+            const personality = db.user?.coachPersonality || 'strict';
+            
+            if (lower.includes('merhaba') || lower.includes('selam')) {
+                aiResponse = 'Merhaba! YKS serüveninde bugün nasılsın? Ne çalışıyoruz?';
+            } else if (lower.includes('yoruldum') || lower.includes('bıktım') || lower.includes('kötü') || lower.includes('yapamıyorum')) {
+                aiResponse = personality === 'strict' ? 'Yorulmak yok! Rakiplerin harıl harıl çalışıyor. Şimdi hemen masaya dön ve kaldığın yerden devam et.' : 'Biliyorum süreç çok yorucu. Ama unutma, bugün döktüğün ter yarınki başarının müjdecisidir. Biraz nefes al ve yapabileceğine inanarak masana geri dön!';
+            } else if (lower.includes('ödev') || lower.includes('görev') || lower.includes('test') || lower.includes('soru')) {
+                aiResponse = 'Ödev mi istiyorsun? Ana Sayfadaki "Manuel Görev Ata" butonuna basarak kütüphanenden yeni görev çekebilirsin. Hatalarına göre sana nokta atışı testler vereceğim!';
+            } else if (lower.includes('deneme') || lower.includes('net')) {
+                aiResponse = 'Denemeler senin aynandır. Netlere çok takılma, Analiz sayfasından net grafiklerini takip et ve asıl önemli olan Hata Defterine yanlışlarını kaydetmeyi unutma!';
+            } else {
+                aiResponse = personality === 'strict' ? 'Şu an gereksiz muhabbet ediyorsun. YKS uzun bir maraton. Hedefine ulaşmak için bugün elinden gelenin en iyisini yap. Planına sadık kal ve masaya dön!' : 'Seni çok iyi anlıyorum. Bir koç olarak buradayım. Hedefine ulaşmak için bugün elinden gelenin en iyisini yapmaya odaklan. Planına sadık kal ve sakın pes etme!';
+            }
+            aiResponse = "<i>(Çevrimdışı Mod)</i> " + aiResponse;
+        }
+
         document.getElementById('typingIndicator').style.display = 'none';
         addChatBubble(aiResponse, 'ai');
         db.chatHistory.push({ role: 'ai', text: aiResponse });
@@ -763,28 +796,53 @@
         scrollToBottom();
     }
 
-    async function sendLatestExamToCoach() {
+    function sendLatestExamToCoach() {
         if(db.exams.length === 0) return showToast("Sistemde kayıtlı deneme bulunmuyor.");
         
         const latestExam = [...db.exams].sort((a,b) => b.id - a.id)[0];
-        const libraryStr = db.library.map(b => `${b.ders} - ${b.ad}`).join(', ');
-        const examStr = latestExam.subjects.map(s => `${s.name}: ${s.net} Net`).join(', ');
-
-        const promptText = `Sisteme yeni bir deneme girildi. Deneme Türü: ${latestExam.type}. Toplam Net: ${latestExam.totalNet}. Branş Analizi: ${examStr}. Öğrencinin Kütüphanesi: ${libraryStr}. Bu sonuçları analiz et, beni motive et ve kütüphanemdeki en uygun kitaptan bana eksik kapatma ödevi ver.`;
-
-        showTab('coach', document.querySelectorAll('.nav-item')[2]);
         
-        addChatBubble(`Sistem Mesajı: "${latestExam.name}" analizi için koça gönderildi.`, 'user');
+        // 3. indeks Koç sekmesidir. (Plan, Analiz, Odaklan, Koç)
+        showTab('coach', document.querySelectorAll('.nav-item')[3]);
+        
+        addChatBubble(`Sistem Mesajı: "${latestExam.name}" analizi koçtan istendi.`, 'user');
         document.getElementById('typingIndicator').style.display = 'block';
         scrollToBottom();
 
-        const aiResponse = await callAI(promptText);
-        
-        document.getElementById('typingIndicator').style.display = 'none';
-        addChatBubble(aiResponse, 'ai');
-        db.chatHistory.push({ role: 'ai', text: aiResponse });
-        save();
-        scrollToBottom();
+        setTimeout(() => {
+            let analysis = `<b>${latestExam.name} Detaylı Analizi:</b><br><br>`;
+            let weakSubjects = [];
+
+            latestExam.subjects.forEach(s => {
+                if (s.net < 6 && (s.name.includes('Fizik') || s.name.includes('Kimya') || s.name.includes('Biyoloji'))) weakSubjects.push(s.name);
+                else if (s.net < 15 && s.name.includes('Matematik')) weakSubjects.push(s.name);
+                else if (s.net < 25 && s.name.includes('Türkçe')) weakSubjects.push(s.name);
+                else if (s.net < 8 && !s.name.includes('Fizik') && !s.name.includes('Kimya') && !s.name.includes('Biyoloji') && !s.name.includes('Matematik') && !s.name.includes('Türkçe')) weakSubjects.push(s.name);
+            });
+
+            analysis += `Genel Toplam Netin: <b>${latestExam.totalNet}</b>.<br>`;
+
+            if (weakSubjects.length > 0) {
+                analysis += `🚨 Acil dikkat etmen gereken eksik derslerin: <b>${weakSubjects.join(', ')}</b>.<br><br>`;
+                const activeBooks = db.library.filter(b => !b.finished);
+                const matchingBooks = activeBooks.filter(b => weakSubjects.some(w => b.ders.includes(w)));
+                if (matchingBooks.length > 0) {
+                    const book = matchingBooks[Math.floor(Math.random() * matchingBooks.length)];
+                    analysis += `💡 <b>Koçun Sana Özel Ödevi:</b> Kütüphanendeki <i>${book.ad}</i> kitabından zayıf olduğun bu derslerle ilgili acilen 2 test çöz!`;
+                    db.plan.push({ ...book, instanceId: 'task_' + Date.now(), target: `Deneme Eksik Kapatma: ${book.ders} (2 Test)` });
+                    save(); renderPlan();
+                } else {
+                    analysis += `💡 Kütüphanende bu eksik derslere ait bitmemiş kaynak bulamadım. Eksiklerini kapatmak için hemen yeni bir kaynak ekle!`;
+                }
+            } else {
+                analysis += `Harika gidiyorsun! Bütün branşlarda netlerin gayet yüksek ve dengeli. Bu tempoyu asla bozma!`;
+            }
+
+            document.getElementById('typingIndicator').style.display = 'none';
+            addChatBubble(analysis, 'ai');
+            db.chatHistory.push({ role: 'ai', text: analysis });
+            save();
+            scrollToBottom();
+        }, 1200);
     }
 
     function addChatBubble(text, role) {
@@ -798,9 +856,17 @@
 
     function renderChatHistory() {
         const chatBox = document.getElementById('chatContainer');
-        chatBox.innerHTML = '<div class="msg-bubble msg-ai"><b>Sistem:</b> Merhaba, ben Akıllı Rota resmi koçunuz. Deneme verilerinizi analiz etmek ve size uygun stratejiyi belirlemek için buradayım. Planınızı değiştirmek veya itiraz etmek isterseniz buradan bana ulaşabilirsiniz.</div>';
+        chatBox.innerHTML = '<div class="msg-bubble msg-ai"><b>Koç:</b> Merhaba! Ben senin YKS koçunum. Deneme sonuçlarını analiz edebilir, sana ödev verebilir veya sadece sohbet edebiliriz. Ne istersen yaz! 💪</div>';
         db.chatHistory.forEach(msg => addChatBubble(msg.text, msg.role));
         scrollToBottom();
+    }
+
+    function clearChat() {
+        if (!confirm('Sohbet geçmişi silinecek. Emin misin?')) return;
+        db.chatHistory = [];
+        save();
+        renderChatHistory();
+        showToast('Sohbet sıfırlandı.');
     }
 
     function handleChatEnter(e) { if(e.key === 'Enter') sendUserMessage(); }
